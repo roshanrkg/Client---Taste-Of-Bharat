@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taste of Bhaarat | Authentic Indian Spices</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        spice: {
+                            50: '#fff7ed',
+                            500: '#f97316',
+                            700: '#c2410c',
+                            900: '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 22%),
+                repeating-linear-gradient(
+                    115deg,
+                    rgba(194, 65, 12, 0.035) 0,
+                    rgba(194, 65, 12, 0.035) 2px,
+                    transparent 2px,
+                    transparent 68px
+                ),
+                #fdfbf7;
+            overflow-x: hidden;
+        }
+
+        .cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 18rem;
+            height: 18rem;
+            border-radius: 9999px;
+            pointer-events: none;
+            background:
+                radial-gradient(circle, rgba(249, 115, 22, 0.82) 0%, rgba(251, 146, 60, 0.44) 34%, rgba(251, 146, 60, 0.12) 58%, transparent 74%);
+            filter: blur(28px);
+            opacity: 0.95;
+            z-index: 0;
+            transform: translate3d(-45%, -45%, 0);
+            will-change: transform;
+        }
+
+        .glass-nav {
+            background: rgba(253, 251, 247, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .product-card {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(124, 45, 18, 0.15);
+        }
+
+        .product-image-container img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card:hover .product-image-container img {
+            transform: scale(1.1);
+        }
+
+        .collection-carousel {
+            position: relative;
+        }
+
+        .collection-viewport {
+            overflow: hidden;
+            padding: 1rem 0 1.5rem;
+        }
+
+        .collection-track {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        .collection-slide {
+            flex: 0 0 100%;
+        }
+
+        .product-card {
+            height: 100%;
+        }
+
+        .carousel-nav {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(124, 45, 18, 0.12);
+            background: rgba(255, 255, 255, 0.92);
+            color: #7c2d12;
+            box-shadow: 0 12px 35px rgba(124, 45, 18, 0.12);
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .carousel-nav:hover {
+            background: #7c2d12;
+            color: #fff7ed;
+            transform: translateY(-2px);
+        }
+
+        .carousel-nav:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .carousel-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 9999px;
+            background: rgba(124, 45, 18, 0.18);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .carousel-dot.active {
+            background: #c2410c;
+            transform: scale(1.15);
+        }
+
+        .collection-side-nav {
+            position: absolute;
+            top: 52%;
+            left: 0;
+            right: 0;
+            display: none;
+            justify-content: space-between;
+            pointer-events: none;
+            transform: translateY(-50%);
+            z-index: 20;
+        }
+
+        .collection-side-nav .carousel-nav {
+            pointer-events: auto;
+        }
+
+        .hero-image-shell {
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 35px 80px rgba(124, 45, 18, 0.14);
+        }
+
+        .hero-image-label {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(194, 65, 12, 0.08);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        /* Initial states for GSAP */
+        .gsap-reveal, .gsap-card, .gsap-feature, .gsap-story-img, .gsap-story-text {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cursor-glow {
+                display: none;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .collection-slide {
+                flex-basis: calc((100% - 1.5rem) / 2);
+            }
+
+            .collection-side-nav {
+                display: flex;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .collection-slide {
+                flex-basis: calc((100% - 3rem) / 3);
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased">
+    <div class="cursor-glow hidden md:block" data-cursor-glow aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300 py-4 px-8 flex justify-between items-center">
+        <div class="text-2xl font-serif font-bold text-spice-900 tracking-tight cursor-pointer">
+            Taste of Bhaarat<span class="text-spice-500">.</span>
+        </div>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="#home" class="hover:text-spice-500 transition-colors">Home</a>
+            <a href="#features" class="hover:text-spice-500 transition-colors">Why Us</a>
+            <a href="shop/" class="hover:text-spice-500 transition-colors">Collection</a>
+            <a href="story/" class="hover:text-spice-500 transition-colors">Our Story</a>
+            <a href="contact/" class="hover:text-spice-500 transition-colors">Contact</a>
+        </div>
+        <a href="shop/">
+        <button class="bg-spice-900 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-spice-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
+            Shop Now
+        </button>
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="absolute left-[-6rem] bottom-[2rem] w-80 h-80 rounded-full bg-spice-500/35 blur-3xl -z-10"></div>
+        <div class="container mx-auto px-8 grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-6">
+                <span class="gsap-reveal block text-spice-500 font-semibold tracking-wider uppercase text-sm">100% Pure & Authentic</span>
+                <h1 class="gsap-reveal text-5xl md:text-7xl font-serif font-bold text-spice-900 leading-tight">
+                    The Soul of <br>
+                    <span class="italic text-spice-700">Indian Kitchens</span>
+                </h1>
+                <p class="gsap-reveal text-gray-600 text-lg md:text-xl max-w-md leading-relaxed">
+                    Elevate your daily cooking with hand-pounded, sun-dried masalas sourced directly from the finest farms across India.
+                </p>
+                <div class="gsap-reveal pt-4 flex space-x-4">
+                    <a href="#collection" class="inline-block bg-spice-500 text-white px-8 py-4 rounded-full font-medium hover:bg-spice-700 transition-colors shadow-lg shadow-spice-500/30">
+                        Explore Spices
+                    </a>
+                </div>
+            </div>
+            
+            <div class="gsap-hero-img hero-image-shell relative h-[500px] w-full rounded-[2rem] overflow-hidden p-5">
+                <div class="hero-image-label absolute left-8 top-8 z-10 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-spice-700">
+                   A pinch of magic
+                </div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Indian_Spices.jpg" alt="Assortment of Indian spices in white bowls" class="absolute inset-5 h-[calc(100%-2.5rem)] w-[calc(100%-2.5rem)] rounded-[1.5rem] object-cover">
+                <div class="absolute inset-5 rounded-[1.5rem] bg-gradient-to-t from-spice-900/22 via-transparent to-white/10"></div>
+            </div>
+        </div>
+        
+        <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-spice-50 rounded-full blur-3xl opacity-60 -z-10"></div>
+    </section>
+
+    <!-- NEW: Features / Promise Section -->
+<!-- ENHANCED: Features / Promise Section -->
+    <section id="features" class="py-24 bg-spice-900 text-spice-50 relative overflow-hidden">
+        <div class="container mx-auto px-8">
+            
+            <!-- Beautifully styled heading -->
+            <div class="text-center mb-16 space-y-4">
+                <span class="gsap-feature block text-spice-500 font-semibold tracking-wider uppercase text-sm">The Taste of Bhaarat Promise</span>
+                <h2 class="gsap-feature text-4xl md:text-5xl font-serif font-bold text-white">Why Choose Us</h2>
+                <div class="gsap-feature w-24 h-1 bg-spice-500 mx-auto rounded-full mt-6 opacity-50"></div>
+            </div>
+
+            <!-- Expanded Grid (6 items for a balanced layout) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-12 text-center">
+                
+                <!-- Feature 1 -->
+                <div class="gsap-feature flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-spice-700/50 rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg shadow-spice-900/50 border border-spice-700">🌿</div>
+                    <h3 class="text-xl font-serif font-bold">100% Natural</h3>
+                    <p class="opacity-75 text-sm max-w-xs leading-relaxed">No artificial colors, MSG, or preservatives. Just pure, unadulterated flavor from nature.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="gsap-feature flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-spice-700/50 rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg shadow-spice-900/50 border border-spice-700">🥣</div>
+                    <h3 class="text-xl font-serif font-bold">Hand-Pounded</h3>
+                    <p class="opacity-75 text-sm max-w-xs leading-relaxed">Traditional pounding ensures the natural volatile oils and intense aromas remain intact.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="gsap-feature flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-spice-700/50 rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg shadow-spice-900/50 border border-spice-700">☀️</div>
+                    <h3 class="text-xl font-serif font-bold">Sun-Dried</h3>
+                    <p class="opacity-75 text-sm max-w-xs leading-relaxed">Slow-dried under the Indian sun to naturally preserve shelf life and deepen earthy flavors.</p>
+                </div>
+
+                <!-- Feature 4 (NEW) -->
+                <div class="gsap-feature flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-spice-700/50 rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg shadow-spice-900/50 border border-spice-700">🧑🏽‍🌾</div>
+                    <h3 class="text-xl font-serif font-bold">Direct from Farms</h3>
+                    <p class="opacity-75 text-sm max-w-xs leading-relaxed">Sourced directly from partner farmers across India, ensuring fair trade and peak freshness.</p>
+                </div>
+
+                <!-- Feature 5 (NEW) -->
+                <div class="gsap-feature flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-spice-700/50 rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg shadow-spice-900/50 border border-spice-700">🔥</div>
+                    <h3 class="text-xl font-serif font-bold">Small Batch Roasted</h3>
+                    <p class="opacity-75 text-sm max-w-xs leading-relaxed">Carefully slow-roasted in small batches to perfectly activate and release essential oils.</p>
+                </div>
+
+                <!-- Feature 6 (NEW) -->
+                <div class="gsap-feature flex flex-col items-center space-y-4">
+                    <div class="w-16 h-16 bg-spice-700/50 rounded-full flex items-center justify-center text-3xl mb-2 shadow-lg shadow-spice-900/50 border border-spice-700">📜</div>
+                    <h3 class="text-xl font-serif font-bold">Heritage Recipes</h3>
+                    <p class="opacity-75 text-sm max-w-xs leading-relaxed">Crafted using generations-old traditional family blends to recreate the authentic taste of the past.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Collection Section -->
+    <section id="collection" class="py-24 bg-white relative scroll-mt-10">
+        <div class="container mx-auto px-8">
+            <div class="text-center mb-16 space-y-4">
+                <h2 class="gsap-reveal text-4xl md:text-5xl font-serif font-bold text-spice-900">Signature Blends</h2>
+                <p class="gsap-reveal text-gray-500 max-w-2xl mx-auto">Crafted with precision, our signature masalas bring age-old traditional recipes straight to your modern kitchen.</p>
+            </div>
+
+            <div class="collection-carousel">
+                <div class="mb-8">
+                    <p class="text-sm uppercase tracking-[0.24em] text-spice-500">Swipe through our spice shelf</p>
+                </div>
+
+                <div class="collection-side-nav">
+                    <button type="button" class="carousel-nav -translate-x-6" data-carousel-prev aria-label="Previous spices">
+                        &#8592;
+                    </button>
+                    <button type="button" class="carousel-nav translate-x-6" data-carousel-next aria-label="Next spices">
+                        &#8594;
+                    </button>
+                </div>
+
+                <div class="collection-viewport">
+                    <div class="collection-track" data-collection-track></div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-center gap-3" data-carousel-dots aria-label="Collection pagination"></div>
+
+               
+            </div>
+            
+            <div class="mt-16 text-center">
+                <a href="shop/">
+                <button class="border-2 border-spice-900 text-spice-900 px-8 py-3 rounded-full font-medium hover:bg-spice-900 hover:text-white transition-colors">
+                    View All Products
+                </button>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Our Story Section -->
+    <section id="story" class="py-24 bg-spice-50 overflow-hidden">
+        <div class="container mx-auto px-8 grid md:grid-cols-2 gap-16 items-center">
+            <div class="gsap-story-img relative rounded-2xl overflow-hidden h-[600px] shadow-xl">
+                <video
+                    class="absolute inset-0 h-full w-full object-cover"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                >
+                    <source src="spices.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="gsap-story-text space-y-6">
+                <span class="text-spice-500 font-semibold tracking-wider uppercase text-sm">Our Roots</span>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold text-spice-900 leading-tight">Preserving the <br>Legacy of Spices</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    Taste of Bhaarat was born from a simple realization: the masalas we buy today have lost the magic of our grandmothers' kitchens. Mass-produced powders are stripped of their essential oils, resulting in flat flavors and dull colors.
+                </p>
+                <p class="text-gray-600 leading-relaxed">
+                    We decided to go back to the roots. By partnering with small-scale farmers and reviving traditional stone-grinding techniques, we ensure every pinch of our masala delivers an explosion of authentic, uncompromised flavor.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ENHANCED: Footer -->
+    <footer class="bg-spice-900 text-spice-50 pt-20 pb-8">
+        <div class="container mx-auto px-8 grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-spice-700/50 pb-12">
+            
+            <!-- Brand Column -->
+            <div class="md:col-span-5 space-y-4">
+                <h2 class="text-3xl font-serif font-bold text-white">Taste of Bhaarat<span class="text-spice-500">.</span></h2>
+                <p class="opacity-75 text-sm max-w-sm leading-relaxed">
+                    Bringing the authentic, hand-pounded taste of Indian kitchens to the world, one premium spice blend at a time.
+                </p>
+                <div class="flex space-x-4 pt-2">
+                    <!-- Social Icons (Placeholders) -->
+                    <a href="#" class="w-10 h-10 rounded-full bg-spice-700 flex items-center justify-center hover:bg-spice-500 transition-colors">IN</a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-spice-700 flex items-center justify-center hover:bg-spice-500 transition-colors">FB</a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-spice-700 flex items-center justify-center hover:bg-spice-500 transition-colors">X</a>
+                </div>
+            </div>
+
+            <!-- Quick Links Column -->
+            <div class="md:col-span-3 space-y-4">
+                <h3 class="font-bold uppercase tracking-wider text-sm text-spice-500 mb-6">Explore</h3>
+                <ul class="space-y-3 opacity-80 text-sm">
+                    <li><a href="#home" class="hover:text-spice-500 transition-colors">Home</a></li>
+                    <li><a href="#collection" class="hover:text-spice-500 transition-colors">Shop Masalas</a></li>
+                    <li><a href="story/" class="hover:text-spice-500 transition-colors">Our Story</a></li>
+                    <li><a href="contact/" class="hover:text-spice-500 transition-colors">Contact Us</a></li>
+                    <li><a href="contact/" class="hover:text-spice-500 transition-colors">Wholesale Inquiries</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Column -->
+            <div class="md:col-span-4 space-y-4">
+                <h3 class="font-bold uppercase tracking-wider text-sm text-spice-500 mb-6">Contact Us</h3>
+                <ul class="space-y-4 opacity-80 text-sm">
+                    <li class="flex items-start space-x-3">
+                        <span class="text-spice-500 text-lg"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+                        <span>Shop No. 42, Khari Baoli<br>Chandni Chowk, New Delhi<br>Delhi 110006, India</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <span class="text-spice-500 text-lg">📞</span>
+                        <a href="tel:+919876543210" class="hover:text-spice-500 transition-colors">+91 98765 43210</a>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <span class="text-spice-500 text-lg">✉️</span>
+                        <a href="mailto:hello@tasteofbhaarat.com" class="hover:text-spice-500 transition-colors">hello@tasteofbhaarat.com</a>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+        
+        <div class="container mx-auto px-8 mt-8 text-center opacity-50 text-xs">
+            <p>© 2026 Taste of Bhaarat. All rights reserved. | Handcrafted in India.</p>
+        </div>
+    </footer>
+
+    <!-- GSAP Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Animation Logic -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Reset visibility for script initialization
+        gsap.set(".gsap-reveal, .gsap-card, .gsap-feature, .gsap-story-img, .gsap-story-text", { autoAlpha: 1 });
+
+        function initCollectionAnimations() {
+            ScrollTrigger.getAll()
+                .filter((trigger) => trigger.vars.trigger === "#collection")
+                .forEach((trigger) => trigger.kill());
+
+            gsap.set(".gsap-card", { autoAlpha: 1 });
+
+            gsap.fromTo(".gsap-card",
+                { y: 100, autoAlpha: 0 },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: "#collection",
+                        start: "top 75%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        }
+
+        async function initCollectionCarousel() {
+            const track = document.querySelector("[data-collection-track]");
+            const prevButton = document.querySelector("[data-carousel-prev]");
+            const nextButton = document.querySelector("[data-carousel-next]");
+            const dotsContainer = document.querySelector("[data-carousel-dots]");
+
+            if (!track || !prevButton || !nextButton || !dotsContainer) {
+                return;
+            }
+
+            const formatPrice = (price) => `₹${price}`;
+            const fallbackSpices = [
+                {
+                    name: "Lakadong Turmeric",
+                    description: "High curcumin content, vibrant color, and earthy aroma.",
+                    price: 250,
+                    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=900&q=80",
+                    alt: "Golden turmeric powder in a bowl",
+                    badge: "Bestseller"
+                },
+                {
+                    name: "Kashmiri Mirch",
+                    description: "Mild heat with a stunning, deep red hue for your curries.",
+                    price: 320,
+                    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80",
+                    alt: "A spread of Indian spices and herbs on a rustic table"
+                },
+                {
+                    name: "Royal Garam Masala",
+                    description: "A perfectly balanced 15-spice blend roasted to perfection.",
+                    price: 450,
+                    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80&sat=-15",
+                    alt: "An assortment of spice powders and herbs arranged for garam masala"
+                }
+            ];
+
+            let spices = fallbackSpices;
+
+            try {
+                const response = await fetch("./spices.json");
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                if (Array.isArray(data) && data.length) {
+                    spices = data;
+                }
+            } catch (error) {
+                console.warn("Using fallback spice data:", error);
+            }
+
+            track.innerHTML = spices.map((spice) => `
+                <article class="collection-slide">
+                    <div class="gsap-card product-card bg-spice-50 rounded-2xl overflow-hidden cursor-pointer">
+                        <div class="product-image-container relative h-64 overflow-hidden">
+                            <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
+                            ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
+                        </div>
+                        <div class="p-6 text-center">
+                            <h3 class="text-2xl font-serif font-bold text-spice-900 mb-2">${spice.name}</h3>
+                            <p class="text-gray-600 text-sm mb-4">${spice.description}</p>
+                            <span class="text-lg font-semibold text-spice-700">${formatPrice(spice.price)}</span>
+                        </div>
+                    </div>
+                </article>
+            `).join("");
+
+            let index = 0;
+            let perView = 1;
+            let totalPages = 1;
+            let autoPlayId = null;
+
+            function getPerView() {
+                if (window.innerWidth >= 1280) {
+                    return 3;
+                }
+                if (window.innerWidth >= 768) {
+                    return 2;
+                }
+                return 1;
+            }
+
+            function buildDots() {
+                dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, dotIndex) => `
+                    <button
+                        type="button"
+                        class="carousel-dot ${dotIndex === index ? "active" : ""}"
+                        data-dot-index="${dotIndex}"
+                        aria-label="Go to slide ${dotIndex + 1}"
+                    ></button>
+                `).join("");
+            }
+
+            function updateCarousel() {
+                perView = getPerView();
+                totalPages = Math.max(1, Math.ceil(spices.length / perView));
+                index = Math.min(index, totalPages - 1);
+
+                const gap = window.innerWidth >= 768 ? 24 : 24;
+                const slideWidth = track.firstElementChild ? track.firstElementChild.getBoundingClientRect().width : 0;
+                const offset = index * (slideWidth * perView + gap * perView);
+
+                track.style.transform = `translateX(-${offset}px)`;
+                prevButton.disabled = index === 0;
+                nextButton.disabled = index === totalPages - 1;
+                buildDots();
+            }
+
+            function startAutoPlay() {
+                if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || totalPages <= 1) {
+                    return;
+                }
+
+                clearInterval(autoPlayId);
+                autoPlayId = window.setInterval(() => {
+                    index = index >= totalPages - 1 ? 0 : index + 1;
+                    updateCarousel();
+                }, 4200);
+            }
+
+            function stopAutoPlay() {
+                clearInterval(autoPlayId);
+            }
+
+            prevButton.addEventListener("click", () => {
+                index = Math.max(0, index - 1);
+                updateCarousel();
+            });
+
+            nextButton.addEventListener("click", () => {
+                index = Math.min(totalPages - 1, index + 1);
+                updateCarousel();
+            });
+
+            dotsContainer.addEventListener("click", (event) => {
+                const target = event.target.closest("[data-dot-index]");
+                if (!target) {
+                    return;
+                }
+
+                index = Number(target.dataset.dotIndex);
+                updateCarousel();
+            });
+
+            window.addEventListener("resize", updateCarousel);
+            track.addEventListener("mouseenter", stopAutoPlay);
+            track.addEventListener("mouseleave", startAutoPlay);
+            prevButton.addEventListener("mouseenter", stopAutoPlay);
+            prevButton.addEventListener("mouseleave", startAutoPlay);
+            nextButton.addEventListener("mouseenter", stopAutoPlay);
+            nextButton.addEventListener("mouseleave", startAutoPlay);
+            updateCarousel();
+            startAutoPlay();
+            initCollectionAnimations();
+            ScrollTrigger.refresh();
+        }
+
+        // 1. Hero Animations
+        const heroTimeline = gsap.timeline();
+        
+        heroTimeline.fromTo(".gsap-reveal", 
+            { y: 50, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out", delay: 0.2 }
+        );
+
+        heroTimeline.fromTo(".gsap-hero-img",
+            { scale: 0.9, opacity: 0, rotation: -2 },
+            { scale: 1, opacity: 1, rotation: 0, duration: 1.5, ease: "power4.out" },
+            "-=1"
+        );
+
+        gsap.to(".gsap-hero-img", {
+            y: -15,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+
+        // 2. Features Section Animations
+        gsap.fromTo(".gsap-feature", 
+            { y: 50, opacity: 0 },
+            {
+                y: 0, 
+                opacity: 1, 
+                duration: 0.8, 
+                stagger: 0.2, 
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: "#features",
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                }
+            }
+        );
+        initCollectionCarousel();
+
+        // 4. Story Section Animations
+        const storyTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#story",
+                start: "top 60%",
+                toggleActions: "play none none reverse"
+            }
+        });
+
+        storyTimeline.fromTo(".gsap-story-img",
+            { x: -50, opacity: 0 },
+            { x: 0, opacity: 1, duration: 1, ease: "power3.out" }
+        )
+        .fromTo(".gsap-story-text",
+            { x: 50, opacity: 0 },
+            { x: 0, opacity: 1, duration: 1, ease: "power3.out" },
+            "-=0.7"
+        );
+
+        const cursorGlow = document.querySelector("[data-cursor-glow]");
+
+        if (cursorGlow && window.matchMedia("(pointer: fine)").matches) {
+            gsap.set(cursorGlow, {
+                x: window.innerWidth * 0.08,
+                y: window.innerHeight * 0.74
+            });
+
+            const moveGlowX = gsap.quickTo(cursorGlow, "x", { duration: 0.45, ease: "power3.out" });
+            const moveGlowY = gsap.quickTo(cursorGlow, "y", { duration: 0.45, ease: "power3.out" });
+
+            window.addEventListener("pointermove", (event) => {
+                moveGlowX(event.clientX - 144);
+                moveGlowY(event.clientY - 144);
+            });
+        }
+    </script>
+</body>
+</html>
