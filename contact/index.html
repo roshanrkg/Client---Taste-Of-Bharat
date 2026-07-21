@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Taste of Bhaarat</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        spice: {
+                            50: '#fff7ed',
+                            500: '#f97316',
+                            700: '#c2410c',
+                            900: '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Global Styles & Cursor Glow -->
+    <style>
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 22%),
+                repeating-linear-gradient(
+                    115deg,
+                    rgba(194, 65, 12, 0.035) 0,
+                    rgba(194, 65, 12, 0.035) 2px,
+                    transparent 2px,
+                    transparent 68px
+                ),
+                #fdfbf7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 18rem;
+            height: 18rem;
+            border-radius: 9999px;
+            pointer-events: none;
+            background:
+                radial-gradient(circle, rgba(249, 115, 22, 0.82) 0%, rgba(251, 146, 60, 0.44) 34%, rgba(251, 146, 60, 0.12) 58%, transparent 74%);
+            filter: blur(28px);
+            opacity: 0.95;
+            z-index: 0;
+            transform: translate3d(-45%, -45%, 0);
+            will-change: transform;
+        }
+
+        .glass-nav {
+            background: rgba(253, 251, 247, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .contact-stage {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .masala-rain {
+            position: absolute;
+            inset: -3rem;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .contact-card {
+            position: relative;
+            z-index: 1;
+        }
+
+        .spice-particle {
+            position: absolute;
+            top: -4rem;
+            opacity: 0.3;
+            filter: drop-shadow(0 10px 18px rgba(124, 45, 18, 0.1));
+            will-change: transform;
+        }
+
+        .spice-particle svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .spice-cardamom {
+            width: 1rem;
+            height: 1.9rem;
+        }
+
+        .spice-clove {
+            width: 1.1rem;
+            height: 1.5rem;
+        }
+
+        .spice-chilli {
+            width: 1.7rem;
+            height: 1rem;
+        }
+
+        .spice-pepper {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+
+        @keyframes masala-fall {
+            0% {
+                transform: translate3d(0, -10%, 0) rotate(0deg) scale(var(--masala-scale, 1));
+            }
+            50% {
+                transform: translate3d(calc(var(--masala-drift, 0px) * 0.45), 55vh, 0) rotate(calc(var(--masala-rotate, 0deg) * 0.55)) scale(var(--masala-scale, 1));
+            }
+            100% {
+                transform: translate3d(var(--masala-drift, 0px), 112vh, 0) rotate(var(--masala-rotate, 0deg)) scale(var(--masala-scale, 1));
+            }
+        }
+
+        /* Initial states for GSAP */
+        .gsap-reveal, .gsap-form-item {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Custom Input Styling */
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(124, 45, 18, 0.15);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            font-size: 0.95rem;
+            color: #1f2937;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #f97316;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cursor-glow {
+                display: none;
+            }
+
+            .masala-rain {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased">
+    
+    <!-- Dynamic Glowing Cursor -->
+    <div class="cursor-glow hidden md:block" data-cursor-glow aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300 py-4 px-8 flex justify-between items-center">
+        <a href="../" class="text-2xl font-serif font-bold text-spice-900 tracking-tight cursor-pointer">
+            Taste of Bhaarat<span class="text-spice-500">.</span>
+        </a>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="../" class="hover:text-spice-500 transition-colors">Home</a>
+            <a href="../shop/" class="hover:text-spice-500 transition-colors">Collection</a>
+            <a href="../story/" class="hover:text-spice-500 transition-colors">Our Story</a>
+            <a href="../contact/" class="text-spice-500 transition-colors">Contact</a>
+        </div>
+    
+    </nav>
+
+    <!-- Header Section -->
+    <header class="pt-36 pb-12 relative z-10">
+        <div class="container mx-auto px-8 text-center space-y-4">
+            <span class="gsap-reveal block text-spice-500 font-semibold tracking-wider uppercase text-sm">We'd Love to Hear From You</span>
+            <h1 class="gsap-reveal text-5xl md:text-6xl font-serif font-bold text-spice-900">Get in Touch</h1>
+            <p class="gsap-reveal text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">Whether you have a question about our blends, wholesale orders, or just want to share a recipe, our team is ready to help.</p>
+        </div>
+    </header>
+
+    <!-- Main Contact Section -->
+    <main class="flex-grow pb-24 relative z-10">
+        <div class="container mx-auto px-8 max-w-6xl contact-stage">
+            <div class="masala-rain hidden md:block" data-masala-rain aria-hidden="true"></div>
+            <div class="contact-card grid md:grid-cols-5 gap-16 bg-white/40 backdrop-blur-md border border-spice-900/5 rounded-3xl p-8 md:p-12 shadow-xl">
+                
+                <!-- Contact Information (Left) -->
+                <div class="md:col-span-2 space-y-10">
+                    <div>
+                        <h2 class="gsap-reveal text-3xl font-serif font-bold text-spice-900 mb-6">Contact Details</h2>
+                        
+                        <div class="space-y-6">
+                            <!-- Location -->
+                            <div class="gsap-reveal flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-spice-50 rounded-full flex items-center justify-center shrink-0 border border-spice-200">
+                                    <span class="text-xl text-spice-500"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-spice-900 mb-1">Our Store</h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed">GT Road, Asansol<br>Paschim Bardhaman, West Bengal<br>India 713301</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="gsap-reveal flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-spice-50 rounded-full flex items-center justify-center shrink-0 border border-spice-200">
+                                    <span class="text-xl">📞</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-spice-900 mb-1">Call Us</h3>
+                                    <a href="tel:+919876543210" class="text-gray-600 text-sm hover:text-spice-500 transition-colors">+91 98765 43210</a>
+                                    <p class="text-xs text-gray-500 mt-1">Mon - Sat, 9am - 7pm IST</p>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="gsap-reveal flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-spice-50 rounded-full flex items-center justify-center shrink-0 border border-spice-200">
+                                    <span class="text-xl">✉️</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-spice-900 mb-1">Email Us</h3>
+                                    <a href="mailto:hello@tasteofbhaarat.com" class="text-gray-600 text-sm hover:text-spice-500 transition-colors">hello@tasteofbhaarat.com</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Map -->
+                    <div class="gsap-reveal relative h-48 rounded-2xl overflow-hidden shadow-inner hidden md:block">
+                        <iframe
+                            title="Map of Asansol, West Bengal"
+                            src="https://www.google.com/maps?q=Asansol,%20West%20Bengal&z=13&output=embed"
+                            class="absolute inset-0 h-full w-full border-0"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+                </div>
+
+                <!-- Contact Form (Right) -->
+                <div class="md:col-span-3">
+                    
+                    <!-- Web3Forms Integration -->
+                    <form action="https://api.web3forms.com/submit" method="POST" class="space-y-6 bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-spice-100">
+                        
+                        <!-- Web3Forms Access Key -->
+                        <input type="hidden" name="access_key" value="9aac3501-bdba-408e-a769-6c2f4f0bddeb">
+                        
+                        <!-- Optional: Prevents Captcha popup for trusted users -->
+                        <input type="hidden" name="from_name" value="Taste of Bhaarat Website">
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="gsap-form-item space-y-2">
+                                <label for="firstName" class="text-sm font-semibold text-spice-900">First Name</label>
+                                <input type="text" id="firstName" name="First Name" placeholder="Rahul" required class="form-input">
+                            </div>
+                            <div class="gsap-form-item space-y-2">
+                                <label for="lastName" class="text-sm font-semibold text-spice-900">Last Name</label>
+                                <input type="text" id="lastName" name="Last Name" placeholder="Sharma" required class="form-input">
+                            </div>
+                        </div>
+                        
+                        <div class="gsap-form-item space-y-2">
+                            <label for="email" class="text-sm font-semibold text-spice-900">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="rahul@example.com" required class="form-input">
+                        </div>
+
+                        <div class="gsap-form-item space-y-2">
+                            <label for="subject" class="text-sm font-semibold text-spice-900">Subject</label>
+                            <select id="subject" name="Subject" required class="form-input appearance-none">
+                                <option value="" disabled selected>Select an inquiry type</option>
+                                <option value="Order Tracking">Order Tracking</option>
+                                <option value="Wholesale Inquiry">Wholesale Inquiry</option>
+                                <option value="General Question">General Question</option>
+                            </select>
+                        </div>
+                        
+                        <div class="gsap-form-item space-y-2">
+                            <label for="message" class="text-sm font-semibold text-spice-900">Message</label>
+                            <textarea id="message" name="message" rows="5" placeholder="How can we help you today?" required class="form-input resize-none"></textarea>
+                        </div>
+                        
+                        <!-- Web3Forms Honeypot for Spam Protection -->
+                        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                        
+                        <button type="submit" class="gsap-form-item w-full bg-spice-900 text-white py-4 rounded-xl font-bold hover:bg-spice-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200 relative z-20">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-spice-900 text-spice-50 pt-20 pb-8 mt-auto relative z-10">
+        <div class="container mx-auto px-8 grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-spice-700/50 pb-12">
+            
+            <div class="md:col-span-5 space-y-4">
+                <h2 class="text-3xl font-serif font-bold text-white">Taste of Bhaarat<span class="text-spice-500">.</span></h2>
+                <p class="opacity-75 text-sm max-w-sm leading-relaxed">
+                    Bringing the authentic, hand-pounded taste of Indian kitchens to the world, one premium spice blend at a time.
+                </p>
+            </div>
+
+            <div class="md:col-span-3 space-y-4">
+                <h3 class="font-bold uppercase tracking-wider text-sm text-spice-500 mb-6">Explore</h3>
+                <ul class="space-y-3 opacity-80 text-sm">
+                    <li><a href="../" class="hover:text-spice-500 transition-colors">Home</a></li>
+                    <li><a href="../shop/" class="hover:text-spice-500 transition-colors">Shop Masalas</a></li>
+                    <li><a href="../story/" class="hover:text-spice-500 transition-colors">Our Story</a></li>
+                    <li><a href="../contact/" class="hover:text-spice-500 transition-colors">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-4 space-y-4">
+                <h3 class="font-bold uppercase tracking-wider text-sm text-spice-500 mb-6">Contact Us</h3>
+                <ul class="space-y-4 opacity-80 text-sm">
+                    <li class="flex items-start space-x-3">
+                        <span class="text-spice-500 text-lg"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+                        <span>Shop No. 42, Khari Baoli<br>Chandni Chowk, New Delhi<br>Delhi 110006, India</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <span class="text-spice-500 text-lg">📞</span>
+                        <a href="tel:+919876543210" class="hover:text-spice-500 transition-colors">+91 98765 43210</a>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+        
+        <div class="container mx-auto px-8 mt-8 text-center opacity-50 text-xs">
+            <p>© 2026 Taste of Bhaarat. All rights reserved. | Handcrafted in India.</p>
+        </div>
+    </footer>
+
+    <!-- GSAP Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Animation Logic -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Make elements visible for GSAP to animate
+        gsap.set(".gsap-reveal, .gsap-form-item", { autoAlpha: 1 });
+
+        // 1. General Reveals (Header & Left Column Info)
+        gsap.fromTo(".gsap-reveal", 
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.1 }
+        );
+
+        // 2. Form Inputs Stagger Reveal
+        gsap.fromTo(".gsap-form-item", 
+            { x: 20, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out", delay: 0.4 }
+        );
+
+        // 3. Custom Glowing Cursor Logic
+        const cursorGlow = document.querySelector("[data-cursor-glow]");
+
+        if (cursorGlow && window.matchMedia("(pointer: fine)").matches) {
+            gsap.set(cursorGlow, {
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2
+            });
+
+            const moveGlowX = gsap.quickTo(cursorGlow, "x", { duration: 0.45, ease: "power3.out" });
+            const moveGlowY = gsap.quickTo(cursorGlow, "y", { duration: 0.45, ease: "power3.out" });
+
+            window.addEventListener("pointermove", (event) => {
+                moveGlowX(event.clientX - 144);
+                moveGlowY(event.clientY - 144);
+            });
+        }
+
+        const masalaRain = document.querySelector("[data-masala-rain]");
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (masalaRain && !reducedMotion) {
+            const spiceSvgs = {
+                cardamom: `
+                    <svg viewBox="0 0 36 60" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="cardamomBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#9bbd70"></stop>
+                                <stop offset="55%" stop-color="#6b8f48"></stop>
+                                <stop offset="100%" stop-color="#48652f"></stop>
+                            </linearGradient>
+                        </defs>
+                        <path d="M18 3C27 8 32 18 31 31C30 45 24 54 18 57C12 54 6 45 5 31C4 18 9 8 18 3Z" fill="url(#cardamomBody)"></path>
+                        <path d="M18 8V52" stroke="rgba(255,255,255,0.32)" stroke-width="1.8" stroke-linecap="round"></path>
+                        <path d="M12 12C8 19 8 37 12 48" stroke="rgba(56,77,36,0.45)" stroke-width="1.2" stroke-linecap="round"></path>
+                        <path d="M24 12C28 19 28 37 24 48" stroke="rgba(56,77,36,0.45)" stroke-width="1.2" stroke-linecap="round"></path>
+                    </svg>
+                `,
+                clove: `
+                    <svg viewBox="0 0 38 52" aria-hidden="true">
+                        <ellipse cx="19" cy="11" rx="10" ry="8" fill="#6e4026"></ellipse>
+                        <ellipse cx="14" cy="10" rx="4" ry="3" fill="#8e5636"></ellipse>
+                        <rect x="16.3" y="16" width="5.4" height="24" rx="2.7" fill="#5a3420"></rect>
+                        <path d="M19 40C24 40 27 44 27 48H11C11 44 14 40 19 40Z" fill="#7c4829"></path>
+                    </svg>
+                `,
+                chilli: `
+                    <svg viewBox="0 0 72 40" aria-hidden="true">
+                        <path d="M16 24C19 11 31 5 43 8C57 11 63 23 58 31C51 40 35 38 22 35C11 33 6 28 16 24Z" fill="#b12217"></path>
+                        <path d="M13 22C18 18 23 17 28 18" stroke="#d84b2e" stroke-width="2.2" stroke-linecap="round"></path>
+                        <path d="M57 13C60 9 64 8 68 10" stroke="#5f8d36" stroke-width="3" stroke-linecap="round"></path>
+                        <path d="M56 15C54 13 52 12 49 11" stroke="#7ca64a" stroke-width="2.4" stroke-linecap="round"></path>
+                    </svg>
+                `,
+                pepper: `
+                    <svg viewBox="0 0 42 42" aria-hidden="true">
+                        <circle cx="15" cy="14" r="8" fill="#2f2018"></circle>
+                        <circle cx="26" cy="15" r="7" fill="#412b1f"></circle>
+                        <circle cx="21" cy="25" r="9" fill="#241710"></circle>
+                        <circle cx="13" cy="26" r="5.5" fill="#513627"></circle>
+                        <circle cx="28" cy="26" r="5.5" fill="#513627"></circle>
+                    </svg>
+                `
+            };
+
+            const spiceTypes = [
+                { className: "spice-cardamom", svg: spiceSvgs.cardamom },
+                { className: "spice-pepper", svg: spiceSvgs.pepper },
+                { className: "spice-clove", svg: spiceSvgs.clove },
+                { className: "spice-chilli", svg: spiceSvgs.chilli }
+            ];
+
+            Array.from({ length: 20 }, (_, index) => {
+                const particle = document.createElement("span");
+                const type = spiceTypes[index % spiceTypes.length];
+                const left = Math.random() * 100;
+                const duration = 12 + Math.random() * 9;
+                const delay = Math.random() * -18;
+                const drift = -70 + Math.random() * 140;
+                const rotation = -160 + Math.random() * 320;
+                const scale = 0.8 + Math.random() * 0.8;
+
+                particle.className = `spice-particle ${type.className}`;
+                particle.innerHTML = type.svg;
+                particle.style.left = `${left}%`;
+                particle.style.animation = `masala-fall ${duration}s linear ${delay}s infinite`;
+                particle.style.setProperty("--masala-drift", `${drift}px`);
+                particle.style.setProperty("--masala-rotate", `${rotation}deg`);
+                particle.style.setProperty("--masala-scale", scale.toFixed(2));
+
+                masalaRain.appendChild(particle);
+            });
+        }
+    </script>
+</body>
+</html>

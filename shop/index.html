@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | Taste of Bhaarat</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        spice: {
+                            50: '#fff7ed',
+                            500: '#f97316',
+                            700: '#c2410c',
+                            900: '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 22%),
+                repeating-linear-gradient(
+                    115deg,
+                    rgba(194, 65, 12, 0.035) 0,
+                    rgba(194, 65, 12, 0.035) 2px,
+                    transparent 2px,
+                    transparent 68px
+                ),
+                #fdfbf7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 18rem;
+            height: 18rem;
+            border-radius: 9999px;
+            pointer-events: none;
+            background:
+                radial-gradient(circle, rgba(249, 115, 22, 0.82) 0%, rgba(251, 146, 60, 0.44) 34%, rgba(251, 146, 60, 0.12) 58%, transparent 74%);
+            filter: blur(28px);
+            opacity: 0.95;
+            z-index: 0;
+            transform: translate3d(-45%, -45%, 0);
+            will-change: transform;
+        }
+
+        .glass-nav {
+            background: rgba(253, 251, 247, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .product-card {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(124, 45, 18, 0.15);
+        }
+
+        .product-image-container img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card:hover .product-image-container img {
+            transform: scale(1.1);
+        }
+
+        .gsap-card, .gsap-reveal {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Modal Form Input Styling */
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(124, 45, 18, 0.15);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            color: #1f2937;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #f97316;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cursor-glow {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased">
+    
+    <div class="cursor-glow hidden md:block" data-cursor-glow aria-hidden="true"></div>
+
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300 py-4 px-8 flex justify-between items-center">
+        <a href="../" class="text-2xl font-serif font-bold text-spice-900 tracking-tight cursor-pointer">
+            Taste of Bhaarat<span class="text-spice-500">.</span>
+        </a>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="../" class="hover:text-spice-500 transition-colors">Home</a>
+            <a href="../shop/" class="text-spice-500 transition-colors">Collection</a>
+            <a href="../story/" class="hover:text-spice-500 transition-colors">Our Story</a>
+            <a href="../contact/" class="hover:text-spice-500 transition-colors">Contact</a>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 relative z-10">
+        <div class="container mx-auto px-8 text-center space-y-4">
+            <h1 class="gsap-reveal text-5xl md:text-6xl font-serif font-bold text-spice-900">Our Complete Collection</h1>
+            <p class="gsap-reveal text-gray-600 max-w-2xl mx-auto text-lg">Browse our full range of 100% natural, hand-pounded masalas. From daily essentials to chef's specials, find exactly what your kitchen needs.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow pb-24 relative z-10">
+        <div class="container mx-auto px-8">
+            <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Spices will be injected here via JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- THE ORDER MODAL (Hidden by default) -->
+    <div id="orderModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <!-- Dark Blur Backdrop -->
+        <div class="absolute inset-0 bg-spice-900/40 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md relative z-10 mx-4 border border-spice-100 transform scale-95 transition-transform duration-300" id="orderModalContent">
+            
+            <!-- Close Button -->
+            <button onclick="closeOrderModal()" class="absolute top-5 right-5 text-gray-400 hover:text-spice-900 text-3xl font-light leading-none">&times;</button>
+            
+            <h3 class="text-3xl font-serif font-bold text-spice-900 mb-1">Place Order</h3>
+            <p id="modalProductName" class="text-spice-500 font-medium mb-6 uppercase tracking-wider text-sm"></p>
+
+            <!-- Web3Forms Order Form -->
+            <form action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
+                
+                <!-- Hidden Required Fields -->
+                <input type="hidden" name="access_key" value="9aac3501-bdba-408e-a769-6c2f4f0bddeb">
+                <input type="hidden" name="subject" value="🎉 New Spice Order from Website!">
+                <input type="hidden" name="Product Ordered" id="formProductName" value="">
+                
+                <!-- Weight / Quantity Selection -->
+                <div class="space-y-1">
+                    <label class="text-sm font-semibold text-spice-900">Select Weight / Quantity</label>
+                    <select name="Selected Weight" required class="form-input appearance-none">
+                        <option value="" disabled selected>Choose a size...</option>
+                        <option value="50g">50g Pack</option>
+                        <option value="100g">100g Pack</option>
+                        <option value="250g">250g Pack</option>
+                        <option value="500g">500g Pack</option>
+                    </select>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-sm font-semibold text-spice-900">Full Name</label>
+                        <input type="text" name="Customer Name" placeholder="Rahul Sharma" required class="form-input">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm font-semibold text-spice-900">Phone</label>
+                        <input type="tel" name="Phone Number" placeholder="+91..." required class="form-input">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-sm font-semibold text-spice-900">Email (Optional)</label>
+                    <input type="email" name="Email" placeholder="rahul@example.com" class="form-input">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-sm font-semibold text-spice-900">Delivery Address</label>
+                    <textarea name="Address" rows="3" placeholder="Full street address, city, and PIN code" required class="form-input resize-none"></textarea>
+                </div>
+                
+                <!-- Spam Protection -->
+                <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+                <button type="submit" class="w-full bg-spice-900 text-white py-3.5 rounded-xl font-bold hover:bg-spice-700 transition-colors shadow-lg mt-4 transform hover:-translate-y-0.5 duration-200">
+                    Send Order Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-spice-900 text-spice-50 pt-20 pb-8 mt-auto relative z-10">
+        <div class="container mx-auto px-8 grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-spice-700/50 pb-12">
+            
+            <div class="md:col-span-5 space-y-4">
+                <h2 class="text-3xl font-serif font-bold text-white">Taste of Bhaarat<span class="text-spice-500">.</span></h2>
+                <p class="opacity-75 text-sm max-w-sm leading-relaxed">
+                    Bringing the authentic, hand-pounded taste of Indian kitchens to the world, one premium spice blend at a time.
+                </p>
+            </div>
+
+            <div class="md:col-span-3 space-y-4">
+                <h3 class="font-bold uppercase tracking-wider text-sm text-spice-500 mb-6">Explore</h3>
+                <ul class="space-y-3 opacity-80 text-sm">
+                    <li><a href="../" class="hover:text-spice-500 transition-colors">Home</a></li>
+                    <li><a href="../shop/" class="hover:text-spice-500 transition-colors">Shop Masalas</a></li>
+                    <li><a href="../story/" class="hover:text-spice-500 transition-colors">Our Story</a></li>
+                    <li><a href="../contact/" class="hover:text-spice-500 transition-colors">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-spice-500 transition-colors">Wholesale Inquiries</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-4 space-y-4">
+                <h3 class="font-bold uppercase tracking-wider text-sm text-spice-500 mb-6">Contact Us</h3>
+                <ul class="space-y-4 opacity-80 text-sm">
+                    <li class="flex items-start space-x-3">
+                        <span class="text-spice-500 text-lg"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+                        <span>Shop No. 42, Khari Baoli<br>Chandni Chowk, New Delhi<br>Delhi 110006, India</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <span class="text-spice-500 text-lg">📞</span>
+                        <a href="tel:+919876543210" class="hover:text-spice-500 transition-colors">+91 98765 43210</a>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+        
+        <div class="container mx-auto px-8 mt-8 text-center opacity-50 text-xs">
+            <p>© 2026 Taste of Bhaarat. All rights reserved. | Handcrafted in India.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Fetch JSON and Render Grid
+        async function loadShopProducts() {
+            const grid = document.getElementById("shop-grid");
+            
+            try {
+                const response = await fetch("../spices.json");
+                if (!response.ok) throw new Error("Could not load spices data");
+                
+                const spices = await response.json();
+                
+                grid.innerHTML = spices.map(spice => `
+                    <article class="gsap-card product-card bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col h-full border border-spice-900/5 shadow-sm">
+                        <div class="product-image-container relative h-64 overflow-hidden shrink-0">
+                            <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
+                            ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
+                        </div>
+                        
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-2xl font-serif font-bold text-spice-900">${spice.name}</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-5">${spice.description}</p>
+                            
+                            <ul class="space-y-2 mb-8 flex-grow">
+                                ${spice.features && spice.features.length > 0 ? 
+                                    spice.features.map(feature => `
+                                        <li class="flex items-start text-sm text-gray-700">
+                                            <span class="text-spice-500 mr-2 mt-0.5">✔</span>
+                                            <span>${feature}</span>
+                                        </li>
+                                    `).join('') 
+                                : ""}
+                            </ul>
+                            
+                            <!-- Button trigger to open modal, removing static weight -->
+                            <button onclick="openOrderModal('${spice.name}')" class="w-full bg-spice-900 text-white py-3.5 rounded-xl font-medium hover:bg-spice-700 transition-colors shadow-md hover:shadow-xl transform hover:-translate-y-0.5 duration-200 mt-auto flex justify-center items-center relative z-20">
+                                <span>Order Now</span>
+                            </button>
+                        </div>
+                    </article>
+                `).join("");
+
+                initPageAnimations();
+
+            } catch (error) {
+                console.error("Error loading products:", error);
+                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-10">Unable to load products. Please check if ../spices.json is available.</p>`;
+            }
+        }
+
+        // Modal Logic
+        function openOrderModal(productName) {
+            const modal = document.getElementById('orderModal');
+            const modalContent = document.getElementById('orderModalContent');
+            
+            // Populate the data
+            document.getElementById('modalProductName').innerText = productName;
+            document.getElementById('formProductName').value = productName;
+            
+            // Animate In
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeOrderModal() {
+            const modal = document.getElementById('orderModal');
+            const modalContent = document.getElementById('orderModalContent');
+            
+            // Animate Out
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Animate Elements
+        function initPageAnimations() {
+            gsap.set(".gsap-reveal", { autoAlpha: 1 });
+            gsap.fromTo(".gsap-reveal", 
+                { y: 30, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out", delay: 0.1 }
+            );
+
+            gsap.set(".gsap-card", { autoAlpha: 1 });
+            gsap.fromTo(".gsap-card",
+                { y: 50, autoAlpha: 0 },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 0.7,
+                    stagger: 0.1,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: "#shop-grid",
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        }
+
+        const cursorGlow = document.querySelector("[data-cursor-glow]");
+
+        if (cursorGlow && window.matchMedia("(pointer: fine)").matches) {
+            gsap.set(cursorGlow, {
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2
+            });
+
+            const moveGlowX = gsap.quickTo(cursorGlow, "x", { duration: 0.45, ease: "power3.out" });
+            const moveGlowY = gsap.quickTo(cursorGlow, "y", { duration: 0.45, ease: "power3.out" });
+
+            window.addEventListener("pointermove", (event) => {
+                moveGlowX(event.clientX - 144);
+                moveGlowY(event.clientY - 144);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadShopProducts);
+    </script>
+</body>
+</html>
