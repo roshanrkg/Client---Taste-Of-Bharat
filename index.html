@@ -528,7 +528,10 @@
                 }
                 const data = await response.json();
                 if (Array.isArray(data) && data.length) {
-                    spices = data;
+                    spices = data.map((spice) => ({
+                        ...spice,
+                        image: new URL(spice.image, response.url).href
+                    }));
                 }
             } catch (error) {
                 console.warn("Using fallback spice data:", error);
