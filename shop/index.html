@@ -235,33 +235,34 @@
                 
                 grid.innerHTML = spices.map(spice => `
                     <article class="gsap-card product-card bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col h-full border border-spice-900/5 shadow-sm">
-                        <div class="product-image-container relative h-64 overflow-hidden shrink-0">
-                            <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
-                            ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
-                        </div>
-                        
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-2xl font-serif font-bold text-spice-900">${spice.name}</h3>
+                        <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="block h-full">
+                            <div class="product-image-container relative h-64 overflow-hidden shrink-0">
+                                <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
+                                ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
                             </div>
-                            <p class="text-gray-600 text-sm mb-5">${spice.description}</p>
                             
-                            <ul class="space-y-2 mb-8 flex-grow">
-                                ${spice.features && spice.features.length > 0 ? 
-                                    spice.features.map(feature => `
-                                        <li class="flex items-start text-sm text-gray-700">
-                                            <span class="text-spice-500 mr-2 mt-0.5">✔</span>
-                                            <span>${feature}</span>
-                                        </li>
-                                    `).join('') 
-                                : ""}
-                            </ul>
-                            
-                            <!-- Button trigger to open modal, removing static weight -->
-                            <button onclick="openOrderModal('${spice.name}')" class="w-full bg-spice-900 text-white py-3.5 rounded-xl font-medium hover:bg-spice-700 transition-colors shadow-md hover:shadow-xl transform hover:-translate-y-0.5 duration-200 mt-auto flex justify-center items-center relative z-20">
-                                <span>Order Now</span>
-                            </button>
-                        </div>
+                            <div class="p-6 flex flex-col flex-grow">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-2xl font-serif font-bold text-spice-900">${spice.name}</h3>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-5">${spice.shortDescription || spice.description}</p>
+                                
+                                <ul class="space-y-2 mb-8 flex-grow">
+                                    ${spice.features && spice.features.length > 0 ? 
+                                        spice.features.slice(0, 3).map(feature => `
+                                            <li class="flex items-start text-sm text-gray-700">
+                                                <span class="text-spice-500 mr-2 mt-0.5">✔</span>
+                                                <span>${feature}</span>
+                                            </li>
+                                        `).join('') 
+                                    : ""}
+                                </ul>
+                                
+                                <div class="w-full bg-spice-900 text-white py-3.5 rounded-xl font-medium hover:bg-spice-700 transition-colors shadow-md hover:shadow-xl transform hover:-translate-y-0.5 duration-200 mt-auto flex justify-center items-center relative z-20">
+                                    <span>View Details</span>
+                                </div>
+                            </div>
+                        </a>
                     </article>
                 `).join("");
 

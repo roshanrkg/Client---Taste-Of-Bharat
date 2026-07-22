@@ -470,17 +470,19 @@
 
             track.innerHTML = spices.map((spice) => `
                 <article class="collection-slide">
-                    <div class="gsap-card product-card bg-spice-50 rounded-2xl overflow-hidden cursor-pointer">
-                        <div class="product-image-container relative h-64 overflow-hidden">
-                            <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
-                            ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
+                    <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="block h-full">
+                        <div class="gsap-card product-card bg-spice-50 rounded-2xl overflow-hidden cursor-pointer">
+                            <div class="product-image-container relative h-64 overflow-hidden">
+                                <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
+                                ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
+                            </div>
+                            <div class="p-6 text-center">
+                                <h3 class="text-2xl font-serif font-bold text-spice-900 mb-2">${spice.name}</h3>
+                                <p class="text-gray-600 text-sm mb-4">${spice.description}</p>
+                                <span class="text-lg font-semibold text-spice-700">${formatPrice(spice.price)}</span>
+                            </div>
                         </div>
-                        <div class="p-6 text-center">
-                            <h3 class="text-2xl font-serif font-bold text-spice-900 mb-2">${spice.name}</h3>
-                            <p class="text-gray-600 text-sm mb-4">${spice.description}</p>
-                            <span class="text-lg font-semibold text-spice-700">${formatPrice(spice.price)}</span>
-                        </div>
-                    </div>
+                    </a>
                 </article>
             `).join("");
 
