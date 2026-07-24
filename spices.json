@@ -2,9 +2,16 @@
     {
         "slug": "lakadong-turmeric",
         "name": "Lakadong Turmeric",
+        "category": "ground-masalas",
         "description": "High curcumin content, vibrant color, and earthy aroma.",
         "shortDescription": "A bright, earthy turmeric prized for its potency and aroma.",
         "price": 250,
+        "pricePerWeight": {
+            "50g": 140,
+            "100g": 250,
+            "250g": 580,
+            "500g": 1100
+        },
         "image": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=900&q=80",
         "images": [
             "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1200&q=80",
@@ -15,7 +22,12 @@
         "alt": "Golden turmeric powder in a bowl",
         "badge": "Bestseller",
         "weight": "100g",
-        "weightOptions": ["50g", "100g", "250g", "500g"],
+        "weightOptions": [
+            "50g",
+            "100g",
+            "250g",
+            "500g"
+        ],
         "features": [
             "Exceptionally high curcumin (7-9%)",
             "Sourced directly from Meghalaya",
@@ -26,15 +38,25 @@
             "Earthy aroma that lingers after cooking",
             "Works well in milk, pickles, and marinades"
         ],
-        "usage": ["Curries", "Golden milk", "Pickles"],
+        "usage": [
+            "Curries",
+            "Golden milk",
+            "Pickles"
+        ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     },
     {
         "slug": "kashmiri-mirch",
         "name": "Kashmiri Mirch",
+        "category": "ground-masalas",
         "description": "Mild heat with a stunning, deep red hue for your curries.",
         "shortDescription": "A vibrant chilli powder known for color without overpowering heat.",
         "price": 320,
+        "pricePerWeight": {
+            "50g": 170,
+            "100g": 320,
+            "250g": 750
+        },
         "image": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80",
         "images": [
             "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80",
@@ -44,7 +66,11 @@
         ],
         "alt": "A spread of Indian spices and herbs on a rustic table",
         "weight": "100g",
-        "weightOptions": ["50g", "100g", "250g"],
+        "weightOptions": [
+            "50g",
+            "100g",
+            "250g"
+        ],
         "features": [
             "Vibrant, natural deep red color",
             "Mild heat profile ideal for curries",
@@ -55,15 +81,26 @@
             "Suitable for everyday cooking",
             "Balanced flavor for layered masalas"
         ],
-        "usage": ["Curries", "Tandoori marinades", "Dry rubs"],
+        "usage": [
+            "Curries",
+            "Tandoori marinades",
+            "Dry rubs"
+        ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     },
     {
         "slug": "royal-garam-masala",
         "name": "Royal Garam Masala",
+        "category": "signature-blends",
         "description": "A perfectly balanced 15-spice blend roasted to perfection.",
         "shortDescription": "A classic finishing masala with deep warmth and complexity.",
         "price": 450,
+        "pricePerWeight": {
+            "50g": 240,
+            "100g": 450,
+            "250g": 1050,
+            "500g": 1950
+        },
         "image": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80&sat=-15",
         "images": [
             "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80&sat=-15",
@@ -73,7 +110,12 @@
         ],
         "alt": "An assortment of spice powders and herbs arranged for garam masala",
         "weight": "100g",
-        "weightOptions": ["50g", "100g", "250g", "500g"],
+        "weightOptions": [
+            "50g",
+            "100g",
+            "250g",
+            "500g"
+        ],
         "features": [
             "Blend of 15 premium whole spices",
             "Slow-roasted for maximum aroma",
@@ -84,15 +126,25 @@
             "Perfect for North Indian gravies",
             "Essential in traditional family recipes"
         ],
-        "usage": ["Curries", "Sabzi finishing", "Rice dishes"],
+        "usage": [
+            "Curries",
+            "Sabzi finishing",
+            "Rice dishes"
+        ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     },
     {
         "slug": "malabar-black-pepper",
         "name": "Malabar Black Pepper",
+        "category": "whole-spices",
         "description": "Bold, floral peppercorns that add sharp heat and depth.",
         "shortDescription": "A robust pepper with floral notes and a clean, sharp finish.",
         "price": 380,
+        "pricePerWeight": {
+            "50g": 200,
+            "100g": 380,
+            "250g": 890
+        },
         "image": "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80",
         "images": [
             "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=80",
@@ -103,7 +155,11 @@
         "alt": "Black peppercorns and spices on a dark surface",
         "badge": "Chef's Pick",
         "weight": "100g",
-        "weightOptions": ["50g", "100g", "250g"],
+        "weightOptions": [
+            "50g",
+            "100g",
+            "250g"
+        ],
         "features": [
             "High piperine content for sharp heat",
             "Bold, woody, and floral notes",
@@ -114,26 +170,35 @@
             "Pungent aroma that wakes up any recipe",
             "Great for soups, stews, and masalas"
         ],
-        "usage": ["Seasoning", "Soups", "Marinades"],
+        "usage": [
+            "Seasoning",
+            "Soups",
+            "Marinades"
+        ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     },
     {
         "slug": "green-cardamom",
         "name": "Green Cardamom",
+        "category": "whole-spices",
         "description": "Sweet and citrusy pods ideal for chai, desserts, and biryanis.",
         "shortDescription": "A fragrant green cardamom with sweet, citrusy complexity.",
-        "price": 410,
-        "image": "cardamom_.jpg",
+        "price": 780,
+        "pricePerWeight": {
+            "50g": 410,
+            "100g": 780
+        },
+        "image": "https://4.imimg.com/data4/OC/UF/ANDROID-71396882/product-500x500.jpeg",
         "images": [
-            "cardamom_.jpg",
-            "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1200&q=80"
+            "https://4.imimg.com/data4/OC/UF/ANDROID-71396882/product-500x500.jpeg"
         ],
-        "alt": "Green cardamom pods scattered around spice bowls",
-        "badge": "Chef's Wow",
+        "alt": "Green Cardamom",
+        "badge": "Chef's Pick",
         "weight": "50g",
-        "weightOptions": ["25g", "50g", "100g"],
+        "weightOptions": [
+            "50g",
+            "100g"
+        ],
         "features": [
             "Plump, export-quality pods",
             "Sweet, minty, and citrusy flavor",
@@ -144,15 +209,25 @@
             "Adds elegance to biryani and rice",
             "A little goes a long way"
         ],
-        "usage": ["Chai", "Desserts", "Biryani"],
+        "usage": [
+            "Chai",
+            "Desserts",
+            "Biryani"
+        ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     },
     {
         "slug": "byadgi-chilli",
         "name": "Byadgi Chilli",
+        "category": "ground-masalas",
         "description": "Smoky, ruby-red chillies prized for color and layered flavor.",
         "shortDescription": "A deep-red chilli with smoky sweetness and gentle heat.",
         "price": 340,
+        "pricePerWeight": {
+            "50g": 180,
+            "100g": 340,
+            "250g": 790
+        },
         "image": "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=900&q=80",
         "images": [
             "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=1200&q=80",
@@ -162,7 +237,11 @@
         ],
         "alt": "Red dried chillies with spice powders",
         "weight": "100g",
-        "weightOptions": ["50g", "100g", "250g"],
+        "weightOptions": [
+            "50g",
+            "100g",
+            "250g"
+        ],
         "features": [
             "Low heat with a sweet, smoky flavor",
             "Yields a rich, ruby-red color",
@@ -173,7 +252,11 @@
             "Adds smoky depth without harsh heat",
             "Useful in masala pastes and rubs"
         ],
-        "usage": ["Curries", "Pickles", "Masala paste"],
+        "usage": [
+            "Curries",
+            "Pickles",
+            "Masala paste"
+        ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     }
 ]
