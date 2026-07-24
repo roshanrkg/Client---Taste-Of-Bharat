@@ -259,44 +259,5 @@
             "Masala paste"
         ],
         "shippingInfo": "Packed fresh and shipped within 2-3 business days."
-    },
-    {
-        "slug": "chana-masala",
-        "name": "Chana masala",
-        "category": "ground-masalas",
-        "description": "made by roshan",
-        "shortDescription": "Made with love",
-        "price": 225,
-        "pricePerWeight": {
-            "50g": 150,
-            "100g": 225,
-            "250g": 300,
-            "500g": 700
-        },
-        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtw8SmvZANnIME1Ns957-ghMom2qtajgtTa7zOvBcboyJlSeLKJZqZzgc&s=10",
-        "images": [
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtw8SmvZANnIME1Ns957-ghMom2qtajgtTa7zOvBcboyJlSeLKJZqZzgc&s=10"
-        ],
-        "alt": "Chana masala",
-        "badge": "Chana special",
-        "weight": "50g",
-        "weightOptions": [
-            "50g",
-            "100g",
-            "250g",
-            "500g"
-        ],
-        "features": [
-            "Hand picing"
-        ],
-        "benefits": [
-            "rich aroma",
-            "good boi"
-        ],
-        "usage": [
-            "Curries",
-            "chole"
-        ],
-        "shippingInfo": "Packed fresh and shipped within 2-3 business days."
     }
 ]
