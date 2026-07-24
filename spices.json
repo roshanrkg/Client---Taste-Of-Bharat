@@ -144,16 +144,17 @@
             "100g": 380,
             "250g": 890
         },
-        "image": "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80",
+        "image": "https://media.istockphoto.com/id/177423914/photo/milled-black-pepper-isolated-on-white.jpg?s=1024x1024&w=is&k=20&c=bwwX9sg_EglpjYqrchOS8WAOzyj4LUDxjSvwtxbzR6s=",
         "images": [
+            "https://media.istockphoto.com/id/177423914/photo/milled-black-pepper-isolated-on-white.jpg?s=1024x1024&w=is&k=20&c=bwwX9sg_EglpjYqrchOS8WAOzyj4LUDxjSvwtxbzR6s=",
             "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1200&q=80",
             "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=1200&q=80"
         ],
-        "alt": "Black peppercorns and spices on a dark surface",
+        "alt": "Malabar Black Pepper",
         "badge": "Chef's Pick",
-        "weight": "100g",
+        "weight": "50g",
         "weightOptions": [
             "50g",
             "100g",
