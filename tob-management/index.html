@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -403,12 +404,38 @@
         let activeCategory = "all";
         let searchQuery = "";
 
-        // SHA-256 Crypto Hash Helper
+        // Hardened SHA-256 Crypto Hash Helper (compatible with HTTPS, HTTP, and static hosting)
         async function sha256(message) {
-            const msgUint8 = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            if (typeof CryptoJS !== "undefined" && CryptoJS.SHA256) {
+                return CryptoJS.SHA256(message).toString();
+            }
+            if (window.crypto && window.crypto.subtle) {
+                try {
+                    const msgUint8 = new TextEncoder().encode(message);
+                    const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (e) {}
+            }
+            throw new Error("SHA-256 calculation unsupported in this browser environment.");
+        }
+
+        // Multi-path fetch helper for auth.json across production/preview servers
+        async function fetchAuthData() {
+            const possiblePaths = [
+                "./auth.json",
+                "auth.json",
+                "/tob-management/auth.json"
+            ];
+            for (const path of possiblePaths) {
+                try {
+                    const res = await fetch(path);
+                    if (res.ok) {
+                        return await res.json();
+                    }
+                } catch (e) {}
+            }
+            throw new Error("auth.json not found on server.");
         }
 
         // Login Handler
@@ -426,9 +453,7 @@
                 const userHash = await sha256(user);
                 const passHash = await sha256(pass);
 
-                const res = await fetch("./auth.json");
-                if (!res.ok) throw new Error("Could not load auth configuration.");
-                const authData = await res.json();
+                const authData = await fetchAuthData();
 
                 if (userHash === authData.usernameHash && passHash === authData.passwordHash) {
                     sessionStorage.setItem(AUTH_SESSION_KEY, "true");
@@ -438,11 +463,12 @@
                     loadCatalog();
                     showToast("Welcome back! Logged in successfully.");
                 } else {
+                    errorBox.innerText = "Invalid username or password.";
                     errorBox.classList.remove("hidden");
                 }
             } catch (err) {
                 console.error("Login failed:", err);
-                errorBox.innerText = "Authentication error. Please check auth.json.";
+                errorBox.innerText = `Authentication error: ${err.message || "Please verify auth.json on server"}`;
                 errorBox.classList.remove("hidden");
             } finally {
                 btn.disabled = false;
