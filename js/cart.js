@@ -252,11 +252,42 @@ window.TOBCart = (function () {
         document.getElementById("checkoutBackdrop").addEventListener("click", closeCheckoutModal);
         document.getElementById("checkoutCloseBtn").addEventListener("click", closeCheckoutModal);
 
-        document.getElementById("checkoutForm").addEventListener("submit", function (e) {
-            // Optional client handling
-            setTimeout(() => {
-                clearCart();
-            }, 500);
+        document.getElementById("checkoutForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById("checkoutSubmitBtn");
+            const origText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Submitting Order...`;
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    clearCart();
+                    closeCheckoutModal();
+                    form.reset();
+                    showSweetAlert({
+                        title: "Order Placed Successfully! 🎉",
+                        message: "Thank you for your order! We have received your order details and will contact you shortly to confirm delivery.",
+                        buttonText: "Continue Shopping 🌿"
+                    });
+                } else {
+                    throw new Error(data.message || "Failed to submit order");
+                }
+            } catch (err) {
+                console.error("Web3Forms submission error:", err);
+                form.submit();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origText;
+            }
         });
     }
 
@@ -429,10 +460,97 @@ window.TOBCart = (function () {
         });
     }
 
+    // SweetAlert Modal Popup (Tailwind Implementation)
+    function showSweetAlert({ title, message, buttonText = "Continue Shopping 🌿", onConfirm = null }) {
+        let modal = document.getElementById("tobSweetAlert");
+        if (!modal) {
+            const modalHTML = `
+                <div id="tobSweetAlert" class="fixed inset-0 z-[300] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+                    <div id="tobSweetAlertBackdrop" class="absolute inset-0 bg-spice-900/60 backdrop-blur-md"></div>
+                    <div id="tobSweetAlertBox" class="relative z-10 bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 border border-spice-100 text-center transform scale-95 transition-transform duration-300 space-y-6">
+                        
+                        <!-- Pulsing Green Icon Badge -->
+                        <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+                            <div class="absolute inset-0 rounded-full bg-green-200 animate-ping opacity-25"></div>
+                            <div class="w-20 h-20 rounded-full bg-green-50 text-green-600 border border-green-200 flex items-center justify-center text-4xl shadow-inner relative z-10">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+
+                        <!-- Content Text -->
+                        <div class="space-y-2">
+                            <h3 id="tobSweetAlertTitle" class="text-2xl font-serif font-bold text-spice-900 leading-tight">Order Placed Successfully! 🎉</h3>
+                            <p id="tobSweetAlertMsg" class="text-sm text-gray-600 leading-relaxed">We have received your order details. Our team will contact you shortly to confirm delivery.</p>
+                        </div>
+
+                        <div class="w-12 h-0.5 bg-spice-900/10 mx-auto rounded-full"></div>
+
+                        <!-- Action Button -->
+                        <div>
+                            <button id="tobSweetAlertBtn" type="button" class="w-full bg-spice-900 hover:bg-spice-700 text-white font-bold py-3.5 px-6 rounded-2xl text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-xl cursor-pointer">
+                                Continue Shopping 🌿
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML("beforeend", modalHTML);
+            modal = document.getElementById("tobSweetAlert");
+        }
+
+        const titleEl = document.getElementById("tobSweetAlertTitle");
+        const msgEl = document.getElementById("tobSweetAlertMsg");
+        const btnEl = document.getElementById("tobSweetAlertBtn");
+        const boxEl = document.getElementById("tobSweetAlertBox");
+        const backdrop = document.getElementById("tobSweetAlertBackdrop");
+
+        if (titleEl) titleEl.innerHTML = title;
+        if (msgEl) msgEl.innerText = message;
+        if (btnEl) btnEl.innerText = buttonText;
+
+        modal.classList.remove("hidden");
+        requestAnimationFrame(() => {
+            modal.classList.remove("opacity-0");
+            boxEl.classList.remove("scale-95");
+            boxEl.classList.add("scale-100");
+        });
+
+        const closeAlert = () => {
+            modal.classList.add("opacity-0");
+            boxEl.classList.remove("scale-100");
+            boxEl.classList.add("scale-95");
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                if (typeof onConfirm === "function") onConfirm();
+            }, 300);
+        };
+
+        btnEl.onclick = closeAlert;
+        backdrop.onclick = closeAlert;
+    }
+
+    // Auto-detect URL ?success=1 or ?success=true
+    function checkUrlSuccessParam() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("success") || params.get("success") === "1" || params.get("success") === "true") {
+            clearCart();
+            showSweetAlert({
+                title: "Order Placed Successfully! 🎉",
+                message: "We have received your order details. Our team will contact you shortly to confirm delivery.",
+                buttonText: "Awesome! 🌿"
+            });
+            // Clean up URL query parameters without reloading
+            const cleanUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    }
+
     // Auto-initialize listeners
     document.addEventListener("DOMContentLoaded", () => {
         injectDrawerHTML();
         updateNavBadges();
+        checkUrlSuccessParam();
+
         window.addEventListener("cart:updated", () => {
             updateNavBadges();
             renderDrawer();
@@ -462,5 +580,6 @@ window.TOBCart = (function () {
         closeCheckoutModal,
         renderDrawer,
         showToast,
+        showSweetAlert,
     };
 })();
