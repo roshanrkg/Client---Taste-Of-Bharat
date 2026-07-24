@@ -88,6 +88,7 @@
         }
     </script>
     <script src="/js/navbar.js" defer></script>
+    <script src="/js/cart.js" defer></script>
     <script src="/js/include.js" defer></script>
 
     <style>
@@ -523,23 +524,34 @@
                 console.warn("Using fallback spice data:", error);
             }
 
-            track.innerHTML = spices.map((spice) => `
+            track.innerHTML = spices.map((spice) => {
+                const defaultWeight = spice.weight || (spice.weightOptions ? spice.weightOptions[0] : "100g");
+                return `
                 <article class="collection-slide">
-                    <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="block h-full">
-                        <div class="gsap-card product-card bg-spice-50 rounded-2xl overflow-hidden cursor-pointer">
-                            <div class="product-image-container relative h-64 overflow-hidden">
-                                <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
-                                ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
-                            </div>
-                            <div class="p-6 text-center">
-                                <h3 class="text-2xl font-serif font-bold text-spice-900 mb-2">${spice.name}</h3>
-                                <p class="text-gray-600 text-sm mb-4">${spice.description}</p>
-                                <span class="text-lg font-semibold text-spice-700">${formatPrice(spice.price)}</span>
+                    <div class="gsap-card product-card bg-spice-50 rounded-3xl overflow-hidden flex flex-col h-full border border-spice-900/5 shadow-sm">
+                        <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="block product-image-container relative h-64 overflow-hidden">
+                            <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
+                            ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
+                        </a>
+                        <div class="p-6 text-center flex flex-col flex-grow">
+                            <h3 class="text-2xl font-serif font-bold text-spice-900 mb-2">
+                                <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="hover:text-spice-700 transition-colors">${spice.name}</a>
+                            </h3>
+                            <p class="text-gray-600 text-xs mb-4 flex-grow line-clamp-2">${spice.description}</p>
+                            <div class="text-xl font-serif font-bold text-spice-900 mb-4">${formatPrice(spice.price)} <span class="text-xs font-sans font-normal text-gray-500">/ ${defaultWeight}</span></div>
+                            
+                            <div class="grid grid-cols-2 gap-2 mt-auto">
+                                <button type="button" class="bg-spice-900 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-spice-700 transition-colors cursor-pointer" onclick="TOBCart && TOBCart.addItem({ slug: '${spice.slug}', name: '${spice.name}', weight: '${defaultWeight}', price: ${spice.price}, quantity: 1, image: '${spice.image}' })">
+                                    + Basket
+                                </button>
+                                <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="border border-spice-900/20 text-spice-900 py-2.5 rounded-xl text-xs font-bold hover:bg-spice-900 hover:text-white transition-colors text-center flex items-center justify-center">
+                                    Details
+                                </a>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </article>
-            `).join("");
+            `}).join("");
 
             let index = 0;
             let perView = 1;

@@ -12,6 +12,20 @@
     </div>
 
     <div class="flex items-center gap-3">
+        <!-- Cart Button -->
+        <button
+            type="button"
+            class="relative inline-flex items-center justify-center w-11 h-11 rounded-full border border-spice-900/10 text-spice-900 bg-white/80 hover:bg-white hover:shadow-md transition-all cursor-pointer"
+            aria-label="View Basket"
+            data-cart-toggle
+        >
+            <i class="fa-solid fa-basket-shopping text-base"></i>
+            <span
+                class="absolute -top-1 -right-1 bg-spice-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm hidden"
+                data-cart-badge
+            >0</span>
+        </button>
+
         <a href="/shop/" class="hidden md:inline-flex bg-spice-900 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-spice-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
             Shop Now
         </a>
@@ -41,6 +55,12 @@
             <a href="/shop/" class="mobile-nav-link block px-4 py-3 rounded-xl hover:bg-spice-50 transition-colors" data-nav-link="collection">Collection</a>
             <a href="/story/" class="mobile-nav-link block px-4 py-3 rounded-xl hover:bg-spice-50 transition-colors" data-nav-link="story">Our Story</a>
             <a href="/contact/" class="mobile-nav-link block px-4 py-3 rounded-xl hover:bg-spice-50 transition-colors" data-nav-link="contact">Contact</a>
+            
+            <button type="button" class="mobile-nav-link w-full text-left flex items-center justify-between px-4 py-3 rounded-xl bg-spice-50 text-spice-900 font-bold" data-cart-toggle>
+                <span>🛒 View Shopping Basket</span>
+                <span class="bg-spice-500 text-white text-xs px-2 py-0.5 rounded-full hidden" data-cart-badge>0</span>
+            </button>
+
             <a href="/shop/" class="mobile-nav-link block mt-2 bg-spice-900 text-white text-center px-4 py-3 rounded-xl hover:bg-spice-700 transition-colors">
                 Shop Now
             </a>

@@ -11,7 +11,18 @@ async function injectPartial(selector, url) {
     }
 }
 
+function loadCartScript() {
+    if (!window.TOBCart && !document.querySelector('script[src*="cart.js"]')) {
+        const script = document.createElement("script");
+        script.src = "/js/cart.js";
+        script.defer = true;
+        document.head.appendChild(script);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    loadCartScript();
+
     await Promise.all([
         injectPartial("[data-include-header]", "/header.html"),
         injectPartial("[data-include-footer]", "/footer.html"),
@@ -19,5 +30,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (window.initNavbar) {
         window.initNavbar();
+    }
+
+    // Trigger cart badge refresh after header is injected
+    if (window.TOBCart) {
+        window.dispatchEvent(new CustomEvent("cart:updated"));
     }
 });

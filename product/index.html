@@ -54,6 +54,7 @@
         }
     </script>
     <script src="/js/navbar.js" defer></script>
+    <script src="/js/cart.js" defer></script>
     <script src="/js/include.js" defer></script>
 
     <style>
@@ -135,6 +136,15 @@
 
     <main class="flex-grow relative z-10 pt-28 pb-16">
         <div class="container mx-auto px-8">
+            <!-- Breadcrumbs -->
+            <nav class="mb-6 flex items-center gap-2 text-xs font-semibold text-gray-500">
+                <a href="/" class="hover:text-spice-900 transition-colors">Home</a>
+                <span>/</span>
+                <a href="/shop/" class="hover:text-spice-900 transition-colors">Shop</a>
+                <span>/</span>
+                <span class="text-spice-700" id="breadcrumbName">Spice Product</span>
+            </nav>
+
             <div id="successAlert" class="hidden fixed left-1/2 top-24 z-[120] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-green-800 shadow-lg opacity-0 transition-opacity duration-300">
                 <div class="flex items-start justify-between gap-4">
                     <div>
@@ -162,6 +172,13 @@
             return new URLSearchParams(window.location.search).get("slug");
         }
 
+        function getPriceForWeight(spice, weight) {
+            if (spice.pricePerWeight && spice.pricePerWeight[weight]) {
+                return spice.pricePerWeight[weight];
+            }
+            return spice.price || 250;
+        }
+
         async function loadProduct() {
             const slug = getSlug();
             if (!slug) {
@@ -179,8 +196,14 @@
                     throw new Error("Product not found");
                 }
 
+                document.title = `${spice.name} | Taste of Bhaarat`;
+                const breadcrumbName = document.getElementById("breadcrumbName");
+                if (breadcrumbName) breadcrumbName.innerText = spice.name;
+
                 const gallery = Array.isArray(spice.images) && spice.images.length ? [spice.image, ...spice.images.filter((image) => image !== spice.image)] : [spice.image];
                 const weightOptions = spice.weightOptions && spice.weightOptions.length ? spice.weightOptions : [spice.weight || "100g"];
+                const defaultWeight = weightOptions[0];
+                const initialPrice = getPriceForWeight(spice, defaultWeight);
                 const usage = spice.usage || [];
                 const benefits = spice.benefits || [];
 
@@ -190,13 +213,13 @@
                             <div class="relative rounded-[1.5rem] overflow-hidden aspect-square bg-white">
                                 <img data-main-image src="${gallery[0]}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
                                 ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
-                                <button type="button" data-prev class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 shadow-lg text-spice-900">←</button>
-                                <button type="button" data-next class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 shadow-lg text-spice-900">→</button>
+                                <button type="button" data-prev class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 shadow-lg text-spice-900 font-bold hover:bg-white transition-all">←</button>
+                                <button type="button" data-next class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 shadow-lg text-spice-900 font-bold hover:bg-white transition-all">→</button>
                             </div>
-                            <div class="mt-4 grid grid-cols-3 gap-3">
+                            <div class="mt-4 grid grid-cols-4 gap-3">
                                 ${gallery.map((src, index) => `
                                     <button type="button" class="thumb rounded-2xl overflow-hidden border-2 border-transparent transition-all duration-200 ${index === 0 ? "active" : ""}" data-thumb="${index}">
-                                        <img src="${src}" alt="${spice.name} image ${index + 1}" class="w-full h-24 object-cover">
+                                        <img src="${src}" alt="${spice.name} image ${index + 1}" class="w-full h-20 object-cover">
                                     </button>
                                 `).join("")}
                             </div>
@@ -204,97 +227,69 @@
 
                         <div class="space-y-6">
                             <div class="summary-card rounded-[2rem] p-8">
-                                <p class="text-spice-500 font-semibold uppercase tracking-[0.25em] text-xs">Spice Detail</p>
-                                <h1 class="mt-3 text-4xl md:text-5xl font-serif font-bold text-spice-900">${spice.name}</h1>
-                                <p class="mt-4 text-lg text-gray-600 leading-relaxed">${spice.shortDescription || spice.description}</p>
+                                <span class="text-spice-500 font-semibold uppercase tracking-[0.25em] text-xs">
+                                    ${spice.category ? spice.category.replace("-", " ") : "Authentic Spice"}
+                                </span>
+                                <h1 class="mt-2 text-4xl md:text-5xl font-serif font-bold text-spice-900">${spice.name}</h1>
+                                <p class="mt-4 text-gray-600 leading-relaxed">${spice.shortDescription || spice.description}</p>
 
                                 <div class="mt-6 flex items-end gap-4">
                                     <div>
-                                        <span class="block text-sm uppercase tracking-[0.2em] text-gray-500">Price</span>
-                                        <span class="text-4xl font-serif font-bold text-spice-900">₹<span data-price>${spice.price}</span></span>
+                                        <span class="block text-xs uppercase tracking-[0.2em] text-gray-500">Price</span>
+                                        <span class="text-4xl font-serif font-bold text-spice-900">₹<span data-price>${initialPrice}</span></span>
                                     </div>
-                                    <span class="text-sm text-gray-500 pb-2">per pack</span>
+                                    <span class="text-xs text-gray-500 pb-1">per pack</span>
                                 </div>
 
                                 <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="text-sm font-semibold text-spice-900">Quantity</label>
-                                        <div class="mt-2 flex items-center rounded-xl border border-spice-900/10 bg-white overflow-hidden">
-                                            <button type="button" class="w-12 h-12 text-lg" data-qty-minus>-</button>
-                                            <input type="number" min="1" value="1" data-quantity class="w-full text-center border-0 bg-transparent focus:outline-none">
-                                            <button type="button" class="w-12 h-12 text-lg" data-qty-plus>+</button>
+                                        <label class="text-xs font-bold text-spice-900 uppercase tracking-wider">Quantity</label>
+                                        <div class="mt-2 flex items-center rounded-xl border border-spice-900/15 bg-white overflow-hidden">
+                                            <button type="button" class="w-12 h-11 text-lg font-bold text-gray-600 hover:bg-spice-50" data-qty-minus>-</button>
+                                            <input type="number" min="1" value="1" data-quantity class="w-full text-center border-0 bg-transparent font-bold text-spice-900 focus:outline-none">
+                                            <button type="button" class="w-12 h-11 text-lg font-bold text-gray-600 hover:bg-spice-50" data-qty-plus>+</button>
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="text-sm font-semibold text-spice-900">Pack Size</label>
-                                        <select class="form-input mt-2" data-weight>
+                                        <label class="text-xs font-bold text-spice-900 uppercase tracking-wider">Pack Size</label>
+                                        <select class="form-input mt-2 font-bold text-spice-900" data-weight>
                                             ${weightOptions.map((weight) => `<option value="${weight}">${weight}</option>`).join("")}
                                         </select>
                                     </div>
                                 </div>
 
-                                <div class="mt-6 flex flex-wrap gap-2">
-                                    ${usage.map((item) => `<span class="px-4 py-2 rounded-full bg-spice-50 text-spice-900 text-sm">${item}</span>`).join("")}
+                                <!-- Action Buttons -->
+                                <div class="mt-8 grid grid-cols-2 gap-4">
+                                    <button type="button" data-add-to-basket class="bg-spice-900 text-white py-4 rounded-2xl font-bold hover:bg-spice-700 transition-colors shadow-lg flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-basket-shopping"></i>
+                                        <span>Add to Basket</span>
+                                    </button>
+                                    <button type="button" data-buy-now class="border-2 border-spice-900 text-spice-900 py-4 rounded-2xl font-bold hover:bg-spice-900 hover:text-white transition-colors text-center">
+                                        Buy Now
+                                    </button>
                                 </div>
 
-                                <p class="mt-6 text-sm text-gray-600">${spice.shippingInfo || "Packed fresh and shipped within 2-3 business days."}</p>
+                                <div class="mt-6 flex flex-wrap gap-2">
+                                    ${usage.map((item) => `<span class="px-3.5 py-1.5 rounded-full bg-spice-50 text-spice-900 text-xs font-semibold">📍 Best for: ${item}</span>`).join("")}
+                                </div>
+
+                                <p class="mt-6 text-xs text-gray-500 leading-relaxed">${spice.shippingInfo || "Packed fresh and shipped within 2-3 business days across India."}</p>
                             </div>
 
                             <div class="grid md:grid-cols-2 gap-6">
                                 <div class="summary-card rounded-[2rem] p-8">
-                                    <h2 class="text-2xl font-serif font-bold text-spice-900 mb-4">Features</h2>
+                                    <h2 class="text-xl font-serif font-bold text-spice-900 mb-4">Key Features</h2>
                                     <ul class="space-y-3 text-sm text-gray-700">
                                         ${spice.features.map((feature) => `<li class="flex items-start gap-3"><span class="text-spice-500 mt-0.5">✔</span><span>${feature}</span></li>`).join("")}
                                     </ul>
                                 </div>
                                 <div class="summary-card rounded-[2rem] p-8">
-                                    <h2 class="text-2xl font-serif font-bold text-spice-900 mb-4">Benefits</h2>
+                                    <h2 class="text-xl font-serif font-bold text-spice-900 mb-4">Flavor Benefits</h2>
                                     <ul class="space-y-3 text-sm text-gray-700">
                                         ${benefits.map((item) => `<li class="flex items-start gap-3"><span class="text-spice-500 mt-0.5">✔</span><span>${item}</span></li>`).join("")}
                                     </ul>
                                 </div>
                             </div>
-                        </div>
-                    </section>
-
-                    <section class="mt-12 order-card rounded-[2rem] p-8 md:p-10">
-                        <div class="grid lg:grid-cols-2 gap-10">
-                            <div>
-                                <h2 class="text-3xl font-serif font-bold text-spice-900">Place Order</h2>
-                                <p class="mt-3 text-gray-600">Send us your order request and we’ll get back to you Back</p>
-                                <div class="mt-6 grid sm:grid-cols-2 gap-4 text-sm text-gray-700">
-                                    <div class="rounded-2xl bg-white/70 p-4 border border-spice-900/5">
-                                        <div class="font-semibold text-spice-900">Product</div>
-                                        <div>${spice.name}</div>
-                                    </div>
-                                    <div class="rounded-2xl bg-white/70 p-4 border border-spice-900/5">
-                                        <div class="font-semibold text-spice-900">Starting from</div>
-                                        <div>₹${spice.price}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <form id="orderForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
-                                <input type="hidden" name="access_key" value="9aac3501-bdba-408e-a769-6c2f4f0bddeb">
-                                <input type="hidden" name="subject" value="🎉 New Spice Order from Product Page!">
-                                <input type="hidden" name="Product Ordered" data-product-name value="${spice.name}">
-                                <input type="hidden" name="Selected Weight" data-selected-weight value="${weightOptions[0]}">
-                                <input type="hidden" name="Quantity" data-selected-quantity value="1">
-                                <input type="hidden" name="redirect" data-redirect-url value="">
-                                <input type="hidden" name="botcheck" value="">
-
-                                <div class="grid sm:grid-cols-2 gap-4">
-                                    <input class="form-input" type="text" name="Customer Name" placeholder="Full Name" required>
-                                    <input class="form-input" type="tel" name="Phone Number" placeholder="Phone Number" required>
-                                </div>
-                                <input class="form-input" type="email" name="Email" placeholder="Email Address (Optional)">
-                                <textarea class="form-input resize-none" name="Address" rows="4" placeholder="Delivery Address" required></textarea>
-                                <textarea class="form-input resize-none" name="Notes" rows="3" placeholder="Order Notes (Optional)"></textarea>
-
-                                <button type="submit" class="w-full bg-spice-900 text-white py-4 rounded-xl font-bold hover:bg-spice-700 transition-colors shadow-lg">
-                                    Send Order Request
-                                </button>
-                            </form>
                         </div>
                     </section>
                 `;
@@ -307,12 +302,9 @@
                 const qtyMinus = productRoot.querySelector("[data-qty-minus]");
                 const qtyPlus = productRoot.querySelector("[data-qty-plus]");
                 const weightSelect = productRoot.querySelector("[data-weight]");
-                const selectedWeight = productRoot.querySelector("[data-selected-weight]");
-                const selectedQuantity = productRoot.querySelector("[data-selected-quantity]");
-                const redirectInput = productRoot.querySelector("[data-redirect-url]");
-                const successAlert = document.getElementById("successAlert");
-                const successClose = document.querySelector("[data-success-close]");
-                let successTimer = null;
+                const priceDisplay = productRoot.querySelector("[data-price]");
+                const addBasketBtn = productRoot.querySelector("[data-add-to-basket]");
+                const buyNowBtn = productRoot.querySelector("[data-buy-now]");
 
                 let currentIndex = 0;
 
@@ -330,59 +322,58 @@
                 prev.addEventListener("click", () => setImage(currentIndex - 1));
                 next.addEventListener("click", () => setImage(currentIndex + 1));
 
-                const syncFormState = () => {
-                    selectedWeight.value = weightSelect.value;
-                    selectedQuantity.value = qtyInput.value || "1";
+                const updatePrice = () => {
+                    const selectedWeight = weightSelect.value;
+                    const price = getPriceForWeight(spice, selectedWeight);
+                    priceDisplay.innerText = price;
                 };
 
                 qtyMinus.addEventListener("click", () => {
                     qtyInput.value = String(Math.max(1, Number(qtyInput.value || 1) - 1));
-                    syncFormState();
                 });
 
                 qtyPlus.addEventListener("click", () => {
                     qtyInput.value = String(Number(qtyInput.value || 1) + 1);
-                    syncFormState();
                 });
 
-                qtyInput.addEventListener("input", syncFormState);
-                weightSelect.addEventListener("change", syncFormState);
-                syncFormState();
+                weightSelect.addEventListener("change", updatePrice);
+                updatePrice();
                 setImage(0);
 
-                if (redirectInput) {
-                    const redirectUrl = new URL(window.location.href);
-                    redirectUrl.searchParams.set("slug", slug);
-                    redirectUrl.searchParams.set("submitted", "1");
-                    redirectInput.value = redirectUrl.toString();
-                }
+                addBasketBtn.addEventListener("click", () => {
+                    const weight = weightSelect.value;
+                    const price = getPriceForWeight(spice, weight);
+                    const qty = Number(qtyInput.value) || 1;
 
-                if (successAlert && new URLSearchParams(window.location.search).get("submitted") === "1") {
-                    successAlert.classList.remove("hidden");
-                    window.scrollTo({ top: 0, behavior: "instant" });
-                    requestAnimationFrame(() => {
-                        successAlert.classList.remove("opacity-0");
-                    });
+                    if (window.TOBCart) {
+                        window.TOBCart.addItem({
+                            slug: spice.slug,
+                            name: spice.name,
+                            weight: weight,
+                            price: price,
+                            quantity: qty,
+                            image: spice.image
+                        });
+                    }
+                });
 
-                    successTimer = window.setTimeout(() => {
-                        successAlert.classList.add("opacity-0");
-                        window.setTimeout(() => {
-                            successAlert.classList.add("hidden");
-                        }, 300);
-                    }, 2200);
-                }
+                buyNowBtn.addEventListener("click", () => {
+                    const weight = weightSelect.value;
+                    const price = getPriceForWeight(spice, weight);
+                    const qty = Number(qtyInput.value) || 1;
 
-                if (successAlert && successClose) {
-                    successClose.addEventListener("click", () => {
-                        if (successTimer) {
-                            window.clearTimeout(successTimer);
-                        }
-                        successAlert.classList.add("opacity-0");
-                        window.setTimeout(() => {
-                            successAlert.classList.add("hidden");
-                        }, 300);
-                    });
-                }
+                    if (window.TOBCart) {
+                        window.TOBCart.addItem({
+                            slug: spice.slug,
+                            name: spice.name,
+                            weight: weight,
+                            price: price,
+                            quantity: qty,
+                            image: spice.image
+                        });
+                        window.TOBCart.openCheckoutModal();
+                    }
+                });
 
                 const cursorGlow = document.querySelector("[data-cursor-glow]");
                 if (cursorGlow && window.matchMedia("(pointer: fine)").matches) {

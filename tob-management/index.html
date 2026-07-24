@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Portal | Taste of Bhaarat</title>
+    <link rel="icon" type="image/png" href="/image.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        spice: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            700: '#c2410c',
+                            900: '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #1f2937;
+        }
+        .form-input {
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid rgba(124, 45, 18, 0.18);
+            border-radius: 0.75rem;
+            padding: 0.65rem 0.9rem;
+            font-size: 0.875rem;
+            color: #1f2937;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+        }
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #7c2d12;
+            margin-bottom: 0.35rem;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col relative">
+
+    <!-- LOGIN MODAL OVERLAY -->
+    <div id="loginOverlay" class="fixed inset-0 z-[200] bg-spice-900/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 border border-spice-100 space-y-6 text-center">
+            <div>
+                <div class="w-16 h-16 rounded-full bg-spice-50 text-spice-900 flex items-center justify-center mx-auto mb-3 text-2xl font-bold shadow-sm">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="text-3xl font-serif font-bold text-spice-900">Taste of Bhaarat</h2>
+                <p class="text-xs text-gray-500 mt-1 uppercase tracking-widest font-semibold">Management Portal</p>
+            </div>
+
+            <form id="loginForm" class="space-y-4 text-left">
+                <div>
+                    <label class="form-label">Username</label>
+                    <input type="text" id="loginUser" required placeholder="Enter username" class="form-input" autocomplete="username">
+                </div>
+
+                <div>
+                    <label class="form-label">Password</label>
+                    <input type="password" id="loginPass" required placeholder="Enter password" class="form-input font-mono" autocomplete="current-password">
+                </div>
+
+                <div id="loginError" class="hidden text-xs p-3 rounded-xl bg-red-100 text-red-800 font-semibold text-center">
+                    Invalid username or password.
+                </div>
+
+                <button type="submit" id="loginSubmitBtn" class="w-full bg-spice-900 hover:bg-spice-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Log In</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toastNotification" class="fixed top-20 right-6 z-[120] hidden bg-spice-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-spice-500/30 flex items-center gap-3 transition-all">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+        <span id="toastMessage" class="text-xs font-semibold">Spice saved successfully!</span>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="bg-spice-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-2xl font-serif font-bold tracking-tight text-white hover:text-spice-100 transition-colors">
+                    Taste of Bhaarat <span class="text-spice-500">Portal</span>
+                </a>
+                <span id="githubStatusBadge" class="bg-amber-500/20 text-amber-200 text-xs font-semibold px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span>Checking GitHub...</span>
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="button" id="openSettingsBtn" class="bg-spice-700 hover:bg-spice-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-white/10">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>GitHub Settings</span>
+                </button>
+                <button type="button" id="logoutBtn" class="bg-white/10 hover:bg-red-600/80 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-white/10">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-6 py-8 flex-grow space-y-8">
+
+        <!-- Banner & Quick Actions -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-spice-900/10 flex flex-wrap items-center justify-between gap-6">
+            <div>
+                <h1 class="text-3xl font-serif font-bold text-spice-900">Spice Catalog Manager</h1>
+                <p class="text-gray-600 text-sm mt-1">Add new product items, edit details, or delete items and publish updates live to GitHub.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <button type="button" onclick="openAddModal()" class="bg-spice-900 hover:bg-spice-700 text-white px-6 py-3.5 rounded-2xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-plus-circle text-sm"></i>
+                    <span>+ Add New Spice</span>
+                </button>
+
+                <button type="button" id="publishGithubBtn" class="bg-green-700 hover:bg-green-600 text-white px-5 py-3.5 rounded-2xl text-xs font-bold transition-all shadow-md flex items-center gap-2 relative cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Publish to GitHub</span>
+                    <span id="pendingChangesBadge" class="hidden absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">!</span>
+                </button>
+
+                <button type="button" id="downloadBackupBtn" class="border border-spice-900/20 hover:bg-spice-50 text-spice-900 px-4 py-3.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Backup JSON</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-spice-900/10 flex flex-wrap items-center justify-between gap-4">
+            <div class="relative flex-grow max-w-md">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input type="text" id="adminSearchInput" placeholder="Filter spices by name or description..." class="w-full bg-gray-50 border border-spice-900/15 rounded-xl pl-9 pr-3 py-2 text-xs text-spice-900 focus:outline-none focus:border-spice-500">
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap" id="adminCategoryTabs">
+                <button type="button" class="admin-tab active bg-spice-900 text-white px-4 py-1.5 rounded-full text-xs font-bold border border-spice-900" data-cat="all">All Items</button>
+                <button type="button" class="admin-tab bg-white text-gray-700 hover:bg-spice-50 px-4 py-1.5 rounded-full text-xs font-bold border border-spice-900/15" data-cat="ground-masalas">Ground Masalas</button>
+                <button type="button" class="admin-tab bg-white text-gray-700 hover:bg-spice-50 px-4 py-1.5 rounded-full text-xs font-bold border border-spice-900/15" data-cat="whole-spices">Whole Spices</button>
+                <button type="button" class="admin-tab bg-white text-gray-700 hover:bg-spice-50 px-4 py-1.5 rounded-full text-xs font-bold border border-spice-900/15" data-cat="signature-blends">Signature Blends</button>
+            </div>
+        </div>
+
+        <!-- Product Table Container -->
+        <div class="bg-white rounded-3xl shadow-sm border border-spice-900/10 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-spice-50/60 border-b border-spice-900/10 text-xs font-bold text-spice-900 uppercase tracking-wider">
+                            <th class="p-4">Product</th>
+                            <th class="p-4">Category</th>
+                            <th class="p-4">Base Price</th>
+                            <th class="p-4">Weight Pack Sizes</th>
+                            <th class="p-4">Badge</th>
+                            <th class="p-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminProductsTable" class="divide-y divide-spice-900/5">
+                        <!-- Rows rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottom Add Button Bar -->
+            <div class="p-4 bg-spice-50/40 border-t border-spice-900/10 flex justify-between items-center">
+                <span id="adminItemCountText" class="text-xs text-gray-500 font-semibold">Total products: 0</span>
+                <button type="button" onclick="openAddModal()" class="bg-spice-900 hover:bg-spice-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add Another Spice</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- GITHUB CONFIGURATION MODAL -->
+    <div id="settingsModal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-spice-900/40 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+        <div class="relative z-10 bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 md:p-8 border border-spice-100 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-serif font-bold text-spice-900">GitHub Connection Settings</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Configure your repository token to publish live updates directly.</p>
+                </div>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-spice-900 text-3xl">&times;</button>
+            </div>
+
+            <form id="settingsForm" class="space-y-4">
+                <div>
+                    <label class="form-label">GitHub Username / Owner *</label>
+                    <input type="text" id="cfgOwner" required placeholder="e.g. roshanrkg" class="form-input">
+                </div>
+
+                <div>
+                    <label class="form-label">Repository Name *</label>
+                    <input type="text" id="cfgRepo" required placeholder="e.g. Client---Taste-Of-Bharat" class="form-input">
+                </div>
+
+                <div>
+                    <label class="form-label">Target Branch</label>
+                    <input type="text" id="cfgBranch" required value="main" class="form-input">
+                </div>
+
+                <div>
+                    <label class="form-label">GitHub Personal Access Token (PAT) *</label>
+                    <input type="password" id="cfgToken" required placeholder="ghp_... or github_pat_..." class="form-input font-mono">
+                    <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+                        🔑 <strong>How to create token:</strong> In GitHub, go to <em>Settings → Developer Settings → Personal Access Tokens → Fine-grained tokens</em>. Create a token with access to this repository and permission: <strong>Contents (Read and write)</strong>.
+                    </p>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t border-spice-900/10">
+                    <button type="button" onclick="closeSettingsModal()" class="px-5 py-2.5 rounded-xl border border-spice-900/20 text-xs font-bold text-gray-700">Cancel</button>
+                    <button type="submit" class="bg-spice-900 hover:bg-spice-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-md">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PRODUCT EDITOR MODAL (ADD / EDIT) -->
+    <div id="productModal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-spice-900/40 backdrop-blur-sm" onclick="closeProductModal()"></div>
+        <div class="relative z-10 bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 md:p-8 border border-spice-100 transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            
+            <div class="flex justify-between items-center mb-4 shrink-0 pb-3 border-b border-spice-900/10">
+                <h3 id="productModalTitle" class="text-2xl font-serif font-bold text-spice-900">Add New Spice</h3>
+                <button onclick="closeProductModal()" class="text-gray-400 hover:text-spice-900 text-3xl">&times;</button>
+            </div>
+
+            <form id="productForm" class="space-y-4 overflow-y-auto pr-2 flex-grow">
+                <input type="hidden" id="editOriginalSlug" value="">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">Spice Name *</label>
+                        <input type="text" id="pName" required placeholder="e.g. Green Cardamom" class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">URL Slug *</label>
+                        <input type="text" id="pSlug" required placeholder="e.g. green-cardamom" class="form-input font-mono text-xs">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">Category *</label>
+                        <select id="pCategory" required class="form-input">
+                            <option value="ground-masalas">Ground Masalas</option>
+                            <option value="whole-spices">Whole Spices</option>
+                            <option value="signature-blends">Signature Blends</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Badge Tag (Optional)</label>
+                        <input type="text" id="pBadge" placeholder="e.g. Premium, Bestseller, Fresh Pick" class="form-input">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">Short Description (for cards) *</label>
+                    <input type="text" id="pShortDesc" required placeholder="A aromatic spice whole pods for tea and rich curries." class="form-input">
+                </div>
+
+                <div>
+                    <label class="form-label">Full Description *</label>
+                    <textarea id="pDesc" rows="3" required placeholder="Detailed story, origin, and aroma profile..." class="form-input resize-none"></textarea>
+                </div>
+
+                <!-- Main Cover Image URL -->
+                <div>
+                    <label class="form-label">Main Cover Image URL *</label>
+                    <input type="text" id="pImage" required placeholder="https://images.unsplash.com/... or /cardamom_.jpg" class="form-input font-mono text-xs">
+                </div>
+
+                <!-- Product Gallery / Slider Images Array -->
+                <div>
+                    <label class="form-label">Gallery / Slider Image URLs (One URL per line)</label>
+                    <textarea id="pImagesSlider" rows="3" placeholder="https://images.unsplash.com/photo-1...&#10;https://images.unsplash.com/photo-2...&#10;/cardamom_.jpg" class="form-input font-mono text-xs resize-none"></textarea>
+                    <p class="text-[11px] text-gray-500 mt-1">These image links populate the product page image carousel / slider.</p>
+                </div>
+
+                <!-- Weight Pricing Matrix -->
+                <div class="bg-spice-50/70 p-4 rounded-2xl border border-spice-900/10 space-y-3">
+                    <label class="form-label text-spice-900">Pack Sizes & Price Matrix (₹)</label>
+                    
+                    <div class="grid grid-cols-4 gap-3">
+                        <div>
+                            <span class="text-[11px] font-bold text-gray-600 block mb-1">50g Price</span>
+                            <input type="number" id="price50g" placeholder="140" class="form-input text-center font-bold">
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-gray-600 block mb-1">100g Price</span>
+                            <input type="number" id="price100g" placeholder="250" class="form-input text-center font-bold">
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-gray-600 block mb-1">250g Price</span>
+                            <input type="number" id="price250g" placeholder="580" class="form-input text-center font-bold">
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-gray-600 block mb-1">500g Price</span>
+                            <input type="number" id="price500g" placeholder="1100" class="form-input text-center font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">Key Features (One per line)</label>
+                    <textarea id="pFeatures" rows="3" placeholder="Hand-pounded to retain essential oils&#10;Sourced directly from organic farms" class="form-input resize-none text-xs"></textarea>
+                </div>
+
+                <div>
+                    <label class="form-label">Flavor Benefits (One per line)</label>
+                    <textarea id="pBenefits" rows="3" placeholder="Rich natural aroma&#10;Enhances taste and digestion" class="form-input resize-none text-xs"></textarea>
+                </div>
+
+                <div>
+                    <label class="form-label">Usage Tags (Comma-separated)</label>
+                    <input type="text" id="pUsage" placeholder="Curries, Golden Milk, Tea, Biryani" class="form-input text-xs">
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t border-spice-900/10 shrink-0">
+                    <button type="button" onclick="closeProductModal()" class="px-5 py-2.5 rounded-xl border border-spice-900/20 text-xs font-bold text-gray-700">Cancel</button>
+                    <button type="submit" class="bg-spice-900 hover:bg-spice-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-md cursor-pointer">
+                        Save & Add Spice
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PUBLISH TO GITHUB CONFIRM MODAL -->
+    <div id="publishModal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-spice-900/40 backdrop-blur-sm" onclick="closePublishModal()"></div>
+        <div class="relative z-10 bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 md:p-8 border border-spice-100 transform scale-95 transition-transform duration-300 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-serif font-bold text-spice-900">Publish Changes</h3>
+                <button onclick="closePublishModal()" class="text-gray-400 hover:text-spice-900 text-3xl">&times;</button>
+            </div>
+
+            <p class="text-sm text-gray-600 leading-relaxed">
+                This will commit the updated <strong>spices.json</strong> directly to your GitHub repository (<span id="pubRepoText" class="font-mono text-spice-900 font-bold"></span>). Your hosting platform (Render/Vercel) will automatically rebuild the live site.
+            </p>
+
+            <div>
+                <label class="form-label">Commit Message</label>
+                <input type="text" id="pubCommitMsg" value="Update spices catalog via Management Portal" class="form-input">
+            </div>
+
+            <div id="publishAlert" class="hidden text-xs p-3 rounded-xl"></div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" onclick="closePublishModal()" class="px-5 py-2.5 rounded-xl border border-spice-900/20 text-xs font-bold text-gray-700">Cancel</button>
+                <button type="button" id="confirmPublishBtn" class="bg-green-700 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-md flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Confirm & Commit</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN & LOGIN SCRIPT -->
+    <script>
+        const AUTH_SESSION_KEY = "tob_admin_auth";
+        const CONFIG_KEY = "tob_admin_github_config";
+        const DRAFT_KEY = "tob_admin_catalog_draft";
+
+        let catalog = [];
+        let hasUnsavedChanges = false;
+        let activeCategory = "all";
+        let searchQuery = "";
+
+        // SHA-256 Crypto Hash Helper
+        async function sha256(message) {
+            const msgUint8 = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Login Handler
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const user = document.getElementById("loginUser").value.trim();
+            const pass = document.getElementById("loginPass").value.trim();
+            const errorBox = document.getElementById("loginError");
+            const btn = document.getElementById("loginSubmitBtn");
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...`;
+
+            try {
+                const userHash = await sha256(user);
+                const passHash = await sha256(pass);
+
+                const res = await fetch("./auth.json");
+                if (!res.ok) throw new Error("Could not load auth configuration.");
+                const authData = await res.json();
+
+                if (userHash === authData.usernameHash && passHash === authData.passwordHash) {
+                    sessionStorage.setItem(AUTH_SESSION_KEY, "true");
+                    errorBox.classList.add("hidden");
+                    document.getElementById("loginOverlay").classList.add("hidden");
+                    updateGitHubBadge();
+                    loadCatalog();
+                    showToast("Welcome back! Logged in successfully.");
+                } else {
+                    errorBox.classList.remove("hidden");
+                }
+            } catch (err) {
+                console.error("Login failed:", err);
+                errorBox.innerText = "Authentication error. Please check auth.json.";
+                errorBox.classList.remove("hidden");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>Log In</span>`;
+            }
+        });
+
+        // Logout Handler
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            sessionStorage.removeItem(AUTH_SESSION_KEY);
+            window.location.reload();
+        });
+
+        function checkAuthentication() {
+            if (sessionStorage.getItem(AUTH_SESSION_KEY) === "true") {
+                document.getElementById("loginOverlay").classList.add("hidden");
+                updateGitHubBadge();
+                loadCatalog();
+            } else {
+                document.getElementById("loginOverlay").classList.remove("hidden");
+            }
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById("toastNotification");
+            const icon = document.getElementById("toastIcon");
+            const text = document.getElementById("toastMessage");
+
+            text.innerText = msg;
+            icon.className = isError ? "fa-solid fa-triangle-exclamation text-red-400 text-lg" : "fa-solid fa-circle-check text-green-400 text-lg";
+
+            toast.classList.remove("hidden");
+            setTimeout(() => {
+                toast.classList.add("hidden");
+            }, 3000);
+        }
+
+        // Helper UTF-8 Base64 Encoding
+        function utf8ToBase64(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+        }
+
+        function getConfig() {
+            try {
+                const data = localStorage.getItem(CONFIG_KEY);
+                return data ? JSON.parse(data) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function saveConfig(cfg) {
+            localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+            updateGitHubBadge();
+            showToast("GitHub settings saved!");
+        }
+
+        function updateGitHubBadge() {
+            const badge = document.getElementById("githubStatusBadge");
+            const cfg = getConfig();
+
+            if (cfg && cfg.owner && cfg.repo && cfg.token) {
+                badge.className = "bg-green-500/20 text-green-200 text-xs font-semibold px-3 py-1 rounded-full border border-green-500/30 flex items-center gap-1.5";
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400"></span><span>Connected to ${cfg.owner}/${cfg.repo}</span>`;
+            } else {
+                badge.className = "bg-amber-500/20 text-amber-200 text-xs font-semibold px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5";
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>Configure GitHub Settings</span>`;
+            }
+        }
+
+        async function loadCatalog() {
+            const draft = localStorage.getItem(DRAFT_KEY);
+            if (draft) {
+                try {
+                    catalog = JSON.parse(draft);
+                    renderTable();
+                    return;
+                } catch(e) {}
+            }
+
+            try {
+                const res = await fetch("/spices.json");
+                if (res.ok) {
+                    catalog = await res.json();
+                    renderTable();
+                }
+            } catch (err) {
+                console.error("Failed loading spices.json", err);
+            }
+        }
+
+        function saveDraft() {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(catalog));
+            hasUnsavedChanges = true;
+            document.getElementById("pendingChangesBadge").classList.remove("hidden");
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("adminProductsTable");
+            const counterText = document.getElementById("adminItemCountText");
+            const q = searchQuery.toLowerCase().trim();
+
+            const filtered = catalog.filter((item) => {
+                const matchCat = activeCategory === "all" || item.category === activeCategory;
+                const matchQ = !q || item.name.toLowerCase().includes(q) || item.slug.toLowerCase().includes(q);
+                return matchCat && matchQ;
+            });
+
+            counterText.innerText = `Total products: ${catalog.length} (Showing ${filtered.length})`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-12 text-center text-gray-500">
+                            <i class="fa-solid fa-mortar-pestle text-3xl text-spice-900/20 mb-3 block"></i>
+                            <p class="font-semibold text-gray-700">No spices found matching your criteria.</p>
+                            <button type="button" onclick="openAddModal()" class="mt-4 inline-flex items-center gap-2 bg-spice-900 text-white text-xs font-bold px-4 py-2 rounded-xl">
+                                <i class="fa-solid fa-plus"></i> Add New Spice
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((item) => {
+                const weights = item.weightOptions ? item.weightOptions.join(", ") : (item.weight || "100g");
+                const price = item.price || 250;
+
+                return `
+                    <tr class="hover:bg-spice-50/30 transition-colors">
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded-xl object-cover border border-spice-900/10 shrink-0 bg-spice-50">
+                                <div>
+                                    <h4 class="font-serif font-bold text-spice-900 text-base">${item.name}</h4>
+                                    <code class="text-[11px] text-gray-400">${item.slug}</code>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-spice-700 bg-spice-50 px-2.5 py-1 rounded-md">
+                                ${item.category ? item.category.replace("-", " ") : "Spice"}
+                            </span>
+                        </td>
+                        <td class="p-4 font-bold text-spice-900 text-base">₹${price}</td>
+                        <td class="p-4 text-xs font-semibold text-gray-600">${weights}</td>
+                        <td class="p-4">
+                            ${item.badge ? `<span class="text-[10px] font-bold text-white bg-spice-700 px-2.5 py-0.5 rounded-full">${item.badge}</span>` : `<span class="text-xs text-gray-300">-</span>`}
+                        </td>
+                        <td class="p-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button type="button" onclick="editSpice('${item.slug}')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-spice-900 hover:text-white text-gray-700 flex items-center justify-center transition-colors text-xs" title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button type="button" onclick="duplicateSpice('${item.slug}')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-spice-900 hover:text-white text-gray-700 flex items-center justify-center transition-colors text-xs" title="Duplicate">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                                <button type="button" onclick="deleteSpice('${item.slug}')" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-600 hover:text-white text-red-600 flex items-center justify-center transition-colors text-xs" title="Delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        document.getElementById("pName").addEventListener("input", (e) => {
+            if (!document.getElementById("editOriginalSlug").value) {
+                const slug = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                document.getElementById("pSlug").value = slug;
+            }
+        });
+
+        function openAddModal() {
+            document.getElementById("productModalTitle").innerText = "Add New Spice";
+            document.getElementById("editOriginalSlug").value = "";
+            document.getElementById("productForm").reset();
+            openProductModal();
+        }
+
+        function editSpice(slug) {
+            const item = catalog.find(s => s.slug === slug);
+            if (!item) return;
+
+            document.getElementById("productModalTitle").innerText = `Edit: ${item.name}`;
+            document.getElementById("editOriginalSlug").value = item.slug;
+
+            document.getElementById("pName").value = item.name || "";
+            document.getElementById("pSlug").value = item.slug || "";
+            document.getElementById("pCategory").value = item.category || "ground-masalas";
+            document.getElementById("pBadge").value = item.badge || "";
+            document.getElementById("pShortDesc").value = item.shortDescription || "";
+            document.getElementById("pDesc").value = item.description || "";
+            document.getElementById("pImage").value = item.image || "";
+            
+            // Slider Images
+            const sliderImgs = item.images && Array.isArray(item.images) ? item.images : (item.image ? [item.image] : []);
+            document.getElementById("pImagesSlider").value = sliderImgs.join("\n");
+
+            const pw = item.pricePerWeight || {};
+            document.getElementById("price50g").value = pw["50g"] || "";
+            document.getElementById("price100g").value = pw["100g"] || item.price || "";
+            document.getElementById("price250g").value = pw["250g"] || "";
+            document.getElementById("price500g").value = pw["500g"] || "";
+
+            document.getElementById("pFeatures").value = item.features ? item.features.join("\n") : "";
+            document.getElementById("pBenefits").value = item.benefits ? item.benefits.join("\n") : "";
+            document.getElementById("pUsage").value = item.usage ? item.usage.join(", ") : "";
+
+            openProductModal();
+        }
+
+        function duplicateSpice(slug) {
+            const item = catalog.find(s => s.slug === slug);
+            if (!item) return;
+
+            const newItem = JSON.parse(JSON.stringify(item));
+            newItem.name = `${newItem.name} (Copy)`;
+            newItem.slug = `${newItem.slug}-copy-${Math.floor(Math.random()*1000)}`;
+
+            catalog.push(newItem);
+            saveDraft();
+            showToast(`Duplicated '${item.name}'`);
+        }
+
+        function deleteSpice(slug) {
+            if (confirm(`Are you sure you want to delete spice '${slug}'?`)) {
+                catalog = catalog.filter(s => s.slug !== slug);
+                saveDraft();
+                showToast(`Deleted '${slug}'`);
+            }
+        }
+
+        document.getElementById("productForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const origSlug = document.getElementById("editOriginalSlug").value;
+            const newSlug = document.getElementById("pSlug").value.trim();
+
+            const pw = {};
+            const weights = [];
+            if (document.getElementById("price50g").value) { pw["50g"] = Number(document.getElementById("price50g").value); weights.push("50g"); }
+            if (document.getElementById("price100g").value) { pw["100g"] = Number(document.getElementById("price100g").value); weights.push("100g"); }
+            if (document.getElementById("price250g").value) { pw["250g"] = Number(document.getElementById("price250g").value); weights.push("250g"); }
+            if (document.getElementById("price500g").value) { pw["500g"] = Number(document.getElementById("price500g").value); weights.push("500g"); }
+
+            const basePrice = pw["100g"] || pw["50g"] || (Object.values(pw)[0]) || 250;
+            
+            // Image handling
+            let mainCoverImage = document.getElementById("pImage").value.trim();
+            const sliderLines = document.getElementById("pImagesSlider").value.split("\n").map(s => s.trim()).filter(Boolean);
+            
+            if (!mainCoverImage && sliderLines.length > 0) {
+                mainCoverImage = sliderLines[0];
+            } else if (!mainCoverImage) {
+                mainCoverImage = "/image.png";
+            }
+
+            const imagesArray = sliderLines.length > 0 ? sliderLines : [mainCoverImage];
+            if (!imagesArray.includes(mainCoverImage)) {
+                imagesArray.unshift(mainCoverImage);
+            }
+
+            const spiceData = {
+                slug: newSlug,
+                name: document.getElementById("pName").value.trim(),
+                category: document.getElementById("pCategory").value,
+                description: document.getElementById("pDesc").value.trim(),
+                shortDescription: document.getElementById("pShortDesc").value.trim(),
+                price: basePrice,
+                pricePerWeight: pw,
+                image: mainCoverImage,
+                images: imagesArray,
+                alt: document.getElementById("pName").value.trim(),
+                badge: document.getElementById("pBadge").value.trim() || undefined,
+                weight: weights[0] || "100g",
+                weightOptions: weights.length ? weights : ["100g"],
+                features: document.getElementById("pFeatures").value.split("\n").map(s => s.trim()).filter(Boolean),
+                benefits: document.getElementById("pBenefits").value.split("\n").map(s => s.trim()).filter(Boolean),
+                usage: document.getElementById("pUsage").value.split(",").map(s => s.trim()).filter(Boolean),
+                shippingInfo: "Packed fresh and shipped within 2-3 business days."
+            };
+
+            if (origSlug) {
+                const idx = catalog.findIndex(s => s.slug === origSlug);
+                if (idx > -1) catalog[idx] = spiceData;
+                showToast(`Updated '${spiceData.name}'! Click Publish to send live.`);
+            } else {
+                catalog.push(spiceData);
+                showToast(`Added new spice '${spiceData.name}'! Click Publish to send live.`);
+            }
+
+            saveDraft();
+            closeProductModal();
+        });
+
+        async function publishToGitHub() {
+            const cfg = getConfig();
+            const alertBox = document.getElementById("publishAlert");
+            const confirmBtn = document.getElementById("confirmPublishBtn");
+
+            if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) {
+                alertBox.className = "text-xs p-3 rounded-xl bg-red-100 text-red-800 font-semibold";
+                alertBox.innerText = "Please configure your GitHub credentials in Settings first.";
+                alertBox.classList.remove("hidden");
+                return;
+            }
+
+            const commitMsg = document.getElementById("pubCommitMsg").value.trim() || "Update spices catalog";
+            const filePath = cfg.filePath || "spices.json";
+            const branch = cfg.branch || "main";
+
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Publishing...</span>`;
+
+            try {
+                const getUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}?ref=${branch}`;
+                const getRes = await fetch(getUrl, {
+                    headers: {
+                        "Authorization": `Bearer ${cfg.token}`,
+                        "Accept": "application/vnd.github+json"
+                    }
+                });
+
+                let sha = undefined;
+                if (getRes.ok) {
+                    const data = await getRes.json();
+                    sha = data.sha;
+                }
+
+                const jsonContent = JSON.stringify(catalog, null, 4);
+                const base64Content = utf8ToBase64(jsonContent);
+
+                const putUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${filePath}`;
+                const putRes = await fetch(putUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${cfg.token}`,
+                        "Accept": "application/vnd.github+json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: commitMsg,
+                        content: base64Content,
+                        sha: sha,
+                        branch: branch
+                    })
+                });
+
+                if (!putRes.ok) {
+                    const errData = await putRes.json();
+                    throw new Error(errData.message || `HTTP ${putRes.status}`);
+                }
+
+                alertBox.className = "text-xs p-3 rounded-xl bg-green-100 text-green-800 font-semibold";
+                alertBox.innerText = "🎉 Successfully committed to GitHub! Render will rebuild your site in ~1-2 minutes.";
+                alertBox.classList.remove("hidden");
+
+                hasUnsavedChanges = false;
+                document.getElementById("pendingChangesBadge").classList.add("hidden");
+
+                setTimeout(() => {
+                    closePublishModal();
+                }, 2500);
+
+            } catch (err) {
+                console.error("Publishing error:", err);
+                alertBox.className = "text-xs p-3 rounded-xl bg-red-100 text-red-800 font-semibold";
+                alertBox.innerText = `Error: ${err.message}`;
+                alertBox.classList.remove("hidden");
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>Confirm & Commit</span>`;
+            }
+        }
+
+        function openSettingsModal() {
+            const cfg = getConfig() || {};
+            document.getElementById("cfgOwner").value = cfg.owner || "";
+            document.getElementById("cfgRepo").value = cfg.repo || "";
+            document.getElementById("cfgBranch").value = cfg.branch || "main";
+            document.getElementById("cfgToken").value = cfg.token || "";
+
+            const modal = document.getElementById("settingsModal");
+            modal.classList.remove("hidden");
+            requestAnimationFrame(() => modal.classList.remove("opacity-0"));
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById("settingsModal");
+            modal.classList.add("opacity-0");
+            setTimeout(() => modal.classList.add("hidden"), 300);
+        }
+
+        function openProductModal() {
+            const modal = document.getElementById("productModal");
+            modal.classList.remove("hidden");
+            requestAnimationFrame(() => modal.classList.remove("opacity-0"));
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById("productModal");
+            modal.classList.add("opacity-0");
+            setTimeout(() => modal.classList.add("hidden"), 300);
+        }
+
+        function openPublishModal() {
+            const cfg = getConfig() || {};
+            document.getElementById("pubRepoText").innerText = cfg.owner && cfg.repo ? `${cfg.owner}/${cfg.repo}` : "Not configured";
+            document.getElementById("publishAlert").classList.add("hidden");
+
+            const modal = document.getElementById("publishModal");
+            modal.classList.remove("hidden");
+            requestAnimationFrame(() => modal.classList.remove("opacity-0"));
+        }
+
+        function closePublishModal() {
+            const modal = document.getElementById("publishModal");
+            modal.classList.add("opacity-0");
+            setTimeout(() => modal.classList.add("hidden"), 300);
+        }
+
+        function downloadBackup() {
+            const jsonStr = JSON.stringify(catalog, null, 4);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "spices.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAuthentication();
+
+            document.getElementById("openSettingsBtn").addEventListener("click", openSettingsModal);
+            document.getElementById("publishGithubBtn").addEventListener("click", openPublishModal);
+            document.getElementById("confirmPublishBtn").addEventListener("click", publishToGitHub);
+            document.getElementById("downloadBackupBtn").addEventListener("click", downloadBackup);
+
+            document.getElementById("settingsForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                saveConfig({
+                    owner: document.getElementById("cfgOwner").value.trim(),
+                    repo: document.getElementById("cfgRepo").value.trim(),
+                    branch: document.getElementById("cfgBranch").value.trim() || "main",
+                    token: document.getElementById("cfgToken").value.trim(),
+                    filePath: "spices.json"
+                });
+                closeSettingsModal();
+            });
+
+            document.getElementById("adminSearchInput").addEventListener("input", (e) => {
+                searchQuery = e.target.value;
+                renderTable();
+            });
+
+            document.querySelectorAll("#adminCategoryTabs button").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll("#adminCategoryTabs button").forEach(b => {
+                        b.className = "admin-tab bg-white text-gray-700 hover:bg-spice-50 px-4 py-1.5 rounded-full text-xs font-bold border border-spice-900/15";
+                    });
+                    btn.className = "admin-tab active bg-spice-900 text-white px-4 py-1.5 rounded-full text-xs font-bold border border-spice-900";
+                    activeCategory = btn.dataset.cat;
+                    renderTable();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
