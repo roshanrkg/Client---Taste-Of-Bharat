@@ -55,6 +55,7 @@
         }
     </script>
     <script src="/js/navbar.js" defer></script>
+    <script src="/js/cart.js" defer></script>
     <script src="/js/include.js" defer></script>
 
     <style>
@@ -104,8 +105,8 @@
         }
         
         .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(124, 45, 18, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(124, 45, 18, 0.12);
         }
 
         .product-image-container img {
@@ -113,31 +114,18 @@
         }
 
         .product-card:hover .product-image-container img {
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
 
-        .gsap-card, .gsap-reveal {
+        .gsap-reveal {
             opacity: 0;
             visibility: hidden;
         }
 
-        /* Modal Form Input Styling */
-        .form-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(124, 45, 18, 0.15);
-            border-radius: 0.75rem;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            color: #1f2937;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #f97316;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        .category-tab.active {
+            background-color: #7c2d12;
+            color: #ffffff;
+            border-color: #7c2d12;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -153,86 +141,86 @@
 
     <div data-include-header></div>
 
-    <header class="pt-32 pb-16 relative z-10">
+    <header class="pt-32 pb-12 relative z-10">
         <div class="container mx-auto px-8 text-center space-y-4">
             <h1 class="gsap-reveal text-5xl md:text-6xl font-serif font-bold text-spice-900">Our Complete Collection</h1>
-            <p class="gsap-reveal text-gray-600 max-w-2xl mx-auto text-lg">Browse our full range of 100% natural, hand-pounded masalas. From daily essentials to chef's specials, find exactly what your kitchen needs.</p>
+            <p class="gsap-reveal text-gray-600 max-w-2xl mx-auto text-lg">Browse our full range of 100% natural, hand-pounded masalas. Sourced directly from farms and hand-crafted with care.</p>
         </div>
     </header>
 
     <main class="flex-grow pb-24 relative z-10">
         <div class="container mx-auto px-8">
-            <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <!-- Spices will be injected here via JavaScript -->
+            
+            <!-- SEARCH & FILTER BAR -->
+            <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 mb-12 border border-spice-900/10 shadow-lg space-y-6">
+                <div class="grid md:grid-cols-12 gap-4 items-center">
+                    
+                    <!-- Search Input -->
+                    <div class="md:col-span-7 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input
+                            type="text"
+                            id="shopSearchInput"
+                            placeholder="Search by spice name, usage (e.g. Chai, Curries)..."
+                            class="w-full bg-white pl-11 pr-4 py-3.5 rounded-2xl border border-spice-900/15 text-sm text-spice-900 placeholder-gray-400 focus:outline-none focus:border-spice-500 focus:ring-4 focus:ring-spice-500/10 transition-all"
+                        >
+                    </div>
+
+                    <!-- Sort Select -->
+                    <div class="md:col-span-5 flex items-center justify-end gap-3">
+                        <label for="shopSortSelect" class="text-xs font-bold uppercase tracking-wider text-spice-900 shrink-0">Sort By:</label>
+                        <select
+                            id="shopSortSelect"
+                            class="w-full md:w-auto bg-white px-4 py-3.5 rounded-2xl border border-spice-900/15 text-sm text-spice-900 focus:outline-none focus:border-spice-500 transition-all appearance-none cursor-pointer"
+                        >
+                            <option value="featured">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex flex-wrap items-center justify-between gap-3 border-t border-spice-900/5 pt-4">
+                    <div class="flex flex-wrap gap-2" id="categoryTabs">
+                        <button type="button" class="category-tab active px-5 py-2 rounded-full text-xs font-bold border border-spice-900/15 text-gray-700 hover:border-spice-900 transition-all cursor-pointer" data-category="all">
+                            All Spices
+                        </button>
+                        <button type="button" class="category-tab px-5 py-2 rounded-full text-xs font-bold border border-spice-900/15 text-gray-700 hover:border-spice-900 transition-all cursor-pointer" data-category="ground-masalas">
+                            Ground Masalas
+                        </button>
+                        <button type="button" class="category-tab px-5 py-2 rounded-full text-xs font-bold border border-spice-900/15 text-gray-700 hover:border-spice-900 transition-all cursor-pointer" data-category="whole-spices">
+                            Whole Spices
+                        </button>
+                        <button type="button" class="category-tab px-5 py-2 rounded-full text-xs font-bold border border-spice-900/15 text-gray-700 hover:border-spice-900 transition-all cursor-pointer" data-category="signature-blends">
+                            Signature Blends
+                        </button>
+                    </div>
+
+                    <div id="resultsCounter" class="text-xs font-semibold text-gray-500">
+                        Loading products...
+                    </div>
+                </div>
             </div>
+
+            <!-- SHOP GRID -->
+            <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Products injected dynamically -->
+            </div>
+
+            <!-- ZERO RESULTS STATE -->
+            <div id="zeroResults" class="hidden text-center py-20 bg-white/50 rounded-3xl border border-spice-900/5 p-8">
+                <div class="w-16 h-16 bg-spice-50 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🔍</div>
+                <h3 class="text-2xl font-serif font-bold text-spice-900 mb-2">No Spices Found</h3>
+                <p class="text-gray-600 text-sm max-w-sm mx-auto mb-6">We couldn't find any spices matching your current search or category filter.</p>
+                <button type="button" id="resetFiltersBtn" class="bg-spice-900 text-white px-6 py-2.5 rounded-full text-xs font-bold tracking-wider uppercase hover:bg-spice-700 transition-colors">
+                    Reset Filters
+                </button>
+            </div>
+
         </div>
     </main>
-
-    <!-- THE ORDER MODAL (Hidden by default) -->
-    <div id="orderModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <!-- Dark Blur Backdrop -->
-        <div class="absolute inset-0 bg-spice-900/40 backdrop-blur-sm" onclick="closeOrderModal()"></div>
-        
-        <!-- Modal Content -->
-        <div class="bg-white/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md relative z-10 mx-4 border border-spice-100 transform scale-95 transition-transform duration-300" id="orderModalContent">
-            
-            <!-- Close Button -->
-            <button onclick="closeOrderModal()" class="absolute top-5 right-5 text-gray-400 hover:text-spice-900 text-3xl font-light leading-none">&times;</button>
-            
-            <h3 class="text-3xl font-serif font-bold text-spice-900 mb-1">Place Order</h3>
-            <p id="modalProductName" class="text-spice-500 font-medium mb-6 uppercase tracking-wider text-sm"></p>
-
-            <!-- Web3Forms Order Form -->
-            <form action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
-                
-                <!-- Hidden Required Fields -->
-                <input type="hidden" name="access_key" value="9aac3501-bdba-408e-a769-6c2f4f0bddeb">
-                <input type="hidden" name="subject" value="🎉 New Spice Order from Website!">
-                <input type="hidden" name="Product Ordered" id="formProductName" value="">
-                
-                <!-- Weight / Quantity Selection -->
-                <div class="space-y-1">
-                    <label class="text-sm font-semibold text-spice-900">Select Weight / Quantity</label>
-                    <select name="Selected Weight" required class="form-input appearance-none">
-                        <option value="" disabled selected>Choose a size...</option>
-                        <option value="50g">50g Pack</option>
-                        <option value="100g">100g Pack</option>
-                        <option value="250g">250g Pack</option>
-                        <option value="500g">500g Pack</option>
-                    </select>
-                </div>
-
-                <!-- Customer Details -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-sm font-semibold text-spice-900">Full Name</label>
-                        <input type="text" name="Customer Name" placeholder="Rahul Sharma" required class="form-input">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-sm font-semibold text-spice-900">Phone</label>
-                        <input type="tel" name="Phone Number" placeholder="+91..." required class="form-input">
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-sm font-semibold text-spice-900">Email (Optional)</label>
-                    <input type="email" name="Email" placeholder="rahul@example.com" class="form-input">
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-sm font-semibold text-spice-900">Delivery Address</label>
-                    <textarea name="Address" rows="3" placeholder="Full street address, city, and PIN code" required class="form-input resize-none"></textarea>
-                </div>
-                
-                <!-- Spam Protection -->
-                <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-
-                <button type="submit" class="w-full bg-spice-900 text-white py-3.5 rounded-xl font-bold hover:bg-spice-700 transition-colors shadow-lg mt-4 transform hover:-translate-y-0.5 duration-200">
-                    Send Order Request
-                </button>
-            </form>
-        </div>
-    </div>
 
     <div data-include-footer></div>
 
@@ -242,136 +230,232 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Fetch JSON and Render Grid
-        async function loadShopProducts() {
-            const grid = document.getElementById("shop-grid");
-            
+        let allSpices = [];
+        let activeCategory = "all";
+        let searchQuery = "";
+        let currentSort = "featured";
+
+        function getPriceForWeight(spice, weight) {
+            if (spice.pricePerWeight && spice.pricePerWeight[weight]) {
+                return spice.pricePerWeight[weight];
+            }
+            return spice.price || 250;
+        }
+
+        async function loadShopData() {
             try {
                 const response = await fetch("../spices.json");
-                if (!response.ok) throw new Error("Could not load spices data");
+                if (!response.ok) throw new Error("Failed to load spices");
+                const rawSpices = await response.json();
                 
-                const spices = (await response.json()).map((spice) => ({
+                allSpices = rawSpices.map((spice) => ({
                     ...spice,
                     image: new URL(spice.image, response.url).href
                 }));
-                
-                grid.innerHTML = spices.map(spice => `
-                    <article class="gsap-card product-card bg-white/60 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col h-full border border-spice-900/5 shadow-sm">
-                        <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="block h-full">
-                            <div class="product-image-container relative h-64 overflow-hidden shrink-0">
-                                <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
-                                ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide">${spice.badge}</div>` : ""}
-                            </div>
-                            
-                            <div class="p-6 flex flex-col flex-grow">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-2xl font-serif font-bold text-spice-900">${spice.name}</h3>
-                                </div>
-                                <p class="text-gray-600 text-sm mb-5">${spice.shortDescription || spice.description}</p>
-                                
-                                <ul class="space-y-2 mb-8 flex-grow">
-                                    ${spice.features && spice.features.length > 0 ? 
-                                        spice.features.slice(0, 3).map(feature => `
-                                            <li class="flex items-start text-sm text-gray-700">
-                                                <span class="text-spice-500 mr-2 mt-0.5">✔</span>
-                                                <span>${feature}</span>
-                                            </li>
-                                        `).join('') 
-                                    : ""}
-                                </ul>
-                                
-                                <div class="w-full bg-spice-900 text-white py-3.5 rounded-xl font-medium hover:bg-spice-700 transition-colors shadow-md hover:shadow-xl transform hover:-translate-y-0.5 duration-200 mt-auto flex justify-center items-center relative z-20">
-                                    <span>View Details</span>
-                                </div>
-                            </div>
-                        </a>
-                    </article>
-                `).join("");
 
+                renderShop();
                 initPageAnimations();
-
-            } catch (error) {
-                console.error("Error loading products:", error);
-                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-10">Unable to load products. Please check if ../spices.json is available.</p>`;
+            } catch (err) {
+                console.error("Shop load error:", err);
+                document.getElementById("shop-grid").innerHTML = `
+                    <p class="col-span-full text-center text-red-500 py-10">Unable to load spices catalog. Please check spices.json.</p>
+                `;
             }
         }
 
-        // Modal Logic
-        function openOrderModal(productName) {
-            const modal = document.getElementById('orderModal');
-            const modalContent = document.getElementById('orderModalContent');
-            
-            // Populate the data
-            document.getElementById('modalProductName').innerText = productName;
-            document.getElementById('formProductName').value = productName;
-            
-            // Animate In
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
+        function filterAndSortSpices() {
+            return allSpices
+                .filter((spice) => {
+                    const matchCategory = activeCategory === "all" || spice.category === activeCategory;
+                    
+                    const q = searchQuery.toLowerCase().trim();
+                    const matchSearch = !q || 
+                        spice.name.toLowerCase().includes(q) ||
+                        spice.description.toLowerCase().includes(q) ||
+                        (spice.usage && spice.usage.some(u => u.toLowerCase().includes(q))) ||
+                        (spice.features && spice.features.some(f => f.toLowerCase().includes(q)));
+
+                    return matchCategory && matchSearch;
+                })
+                .sort((a, b) => {
+                    if (currentSort === "price-asc") return a.price - b.price;
+                    if (currentSort === "price-desc") return b.price - a.price;
+                    if (currentSort === "name-asc") return a.name.localeCompare(b.name);
+                    return 0; // featured default
+                });
         }
 
-        function closeOrderModal() {
-            const modal = document.getElementById('orderModal');
-            const modalContent = document.getElementById('orderModalContent');
-            
-            // Animate Out
-            modal.classList.add('opacity-0');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+        function renderShop() {
+            const grid = document.getElementById("shop-grid");
+            const zeroResults = document.getElementById("zeroResults");
+            const counter = document.getElementById("resultsCounter");
+
+            const filtered = filterAndSortSpices();
+
+            counter.innerText = `Showing ${filtered.length} of ${allSpices.length} spices`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = "";
+                zeroResults.classList.remove("hidden");
+                return;
+            }
+
+            zeroResults.classList.add("hidden");
+
+            grid.innerHTML = filtered.map((spice) => {
+                const defaultWeight = spice.weight || (spice.weightOptions ? spice.weightOptions[0] : "100g");
+                const initialPrice = getPriceForWeight(spice, defaultWeight);
+                const weightOptions = spice.weightOptions || [defaultWeight];
+
+                return `
+                    <article class="gsap-card product-card bg-white/70 backdrop-blur-sm rounded-3xl overflow-hidden flex flex-col h-full border border-spice-900/5 shadow-sm hover:shadow-xl transition-all" data-slug="${spice.slug}">
+                        <div class="product-image-container relative h-60 overflow-hidden shrink-0 bg-spice-50">
+                            <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="block w-full h-full">
+                                <img src="${spice.image}" alt="${spice.alt || spice.name}" class="w-full h-full object-cover">
+                            </a>
+                            ${spice.badge ? `<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-spice-700 uppercase tracking-wide border border-spice-900/5">${spice.badge}</div>` : ""}
+                        </div>
+
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="mb-2">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-spice-500 bg-spice-50 px-2.5 py-1 rounded-md inline-block mb-1">
+                                    ${spice.category ? spice.category.replace("-", " ") : "Spice"}
+                                </span>
+                                <h3 class="text-2xl font-serif font-bold text-spice-900 hover:text-spice-700 transition-colors">
+                                    <a href="/product/?slug=${encodeURIComponent(spice.slug)}">${spice.name}</a>
+                                </h3>
+                            </div>
+
+                            <p class="text-gray-600 text-xs leading-relaxed mb-4 flex-grow">${spice.shortDescription || spice.description}</p>
+
+                            <!-- Weight Selector & Dynamic Price -->
+                            <div class="bg-spice-50/60 p-3 rounded-2xl border border-spice-900/5 mb-4 space-y-2">
+                                <div class="flex items-center justify-between text-xs">
+                                    <label class="font-semibold text-gray-600">Select Size:</label>
+                                    <select class="card-weight-select bg-white border border-spice-900/15 text-xs font-bold text-spice-900 rounded-lg px-2.5 py-1 focus:outline-none focus:border-spice-500 cursor-pointer">
+                                        ${weightOptions.map(w => `<option value="${w}" ${w === defaultWeight ? 'selected' : ''}>${w}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="flex justify-between items-end border-t border-spice-900/5 pt-2">
+                                    <span class="text-[11px] text-gray-500">Price</span>
+                                    <span class="text-2xl font-serif font-bold text-spice-900">₹<span class="card-price-display">${initialPrice}</span></span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="grid grid-cols-2 gap-2 mt-auto">
+                                <button type="button" class="add-to-cart-btn bg-spice-900 text-white py-3 rounded-xl text-xs font-bold hover:bg-spice-700 transition-colors shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
+                                    <i class="fa-solid fa-basket-shopping text-xs"></i>
+                                    <span>Add Basket</span>
+                                </button>
+                                <a href="/product/?slug=${encodeURIComponent(spice.slug)}" class="border border-spice-900/20 text-spice-900 py-3 rounded-xl text-xs font-bold hover:bg-spice-900 hover:text-white transition-colors text-center flex items-center justify-center">
+                                    Details
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            // Bind weight select change events & Add to Cart
+            document.querySelectorAll("#shop-grid article").forEach((card) => {
+                const slug = card.dataset.slug;
+                const spice = allSpices.find((s) => s.slug === slug);
+                if (!spice) return;
+
+                const weightSelect = card.querySelector(".card-weight-select");
+                const priceDisplay = card.querySelector(".card-price-display");
+                const addBtn = card.querySelector(".add-to-cart-btn");
+
+                weightSelect.addEventListener("change", (e) => {
+                    const selectedWeight = e.target.value;
+                    const price = getPriceForWeight(spice, selectedWeight);
+                    priceDisplay.innerText = price;
+                });
+
+                addBtn.addEventListener("click", () => {
+                    const selectedWeight = weightSelect.value;
+                    const price = getPriceForWeight(spice, selectedWeight);
+                    if (window.TOBCart) {
+                        window.TOBCart.addItem({
+                            slug: spice.slug,
+                            name: spice.name,
+                            weight: selectedWeight,
+                            price: price,
+                            quantity: 1,
+                            image: spice.image
+                        });
+                    }
+                });
+            });
+
+            if (window.gsap) {
+                gsap.fromTo(
+                    grid.children,
+                    { y: 20, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.35, stagger: 0.04, ease: "power2.out" }
+                );
+            }
         }
 
-        // Animate Elements
+        // DOM Listeners for Search & Filters
+        document.addEventListener("DOMContentLoaded", () => {
+            loadShopData();
+
+            const searchInput = document.getElementById("shopSearchInput");
+            const sortSelect = document.getElementById("shopSortSelect");
+            const tabs = document.querySelectorAll("#categoryTabs button");
+            const resetBtn = document.getElementById("resetFiltersBtn");
+
+            searchInput.addEventListener("input", (e) => {
+                searchQuery = e.target.value;
+                renderShop();
+            });
+
+            sortSelect.addEventListener("change", (e) => {
+                currentSort = e.target.value;
+                renderShop();
+            });
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    activeCategory = tab.dataset.category;
+                    renderShop();
+                });
+            });
+
+            resetBtn.addEventListener("click", () => {
+                searchQuery = "";
+                searchInput.value = "";
+                activeCategory = "all";
+                currentSort = "featured";
+                sortSelect.value = "featured";
+                tabs.forEach((t) => t.classList.remove("active"));
+                tabs[0].classList.add("active");
+                renderShop();
+            });
+        });
+
         function initPageAnimations() {
             gsap.set(".gsap-reveal", { autoAlpha: 1 });
             gsap.fromTo(".gsap-reveal", 
                 { y: 30, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out", delay: 0.1 }
-            );
-
-            gsap.set(".gsap-card", { autoAlpha: 1 });
-            gsap.fromTo(".gsap-card",
-                { y: 50, autoAlpha: 0 },
-                {
-                    y: 0,
-                    autoAlpha: 1,
-                    duration: 0.7,
-                    stagger: 0.1,
-                    ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: "#shop-grid",
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    }
-                }
+                { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" }
             );
         }
 
         const cursorGlow = document.querySelector("[data-cursor-glow]");
-
         if (cursorGlow && window.matchMedia("(pointer: fine)").matches) {
-            gsap.set(cursorGlow, {
-                x: window.innerWidth / 2,
-                y: window.innerHeight / 2
-            });
-
+            gsap.set(cursorGlow, { x: window.innerWidth / 2, y: window.innerHeight / 2 });
             const moveGlowX = gsap.quickTo(cursorGlow, "x", { duration: 0.45, ease: "power3.out" });
             const moveGlowY = gsap.quickTo(cursorGlow, "y", { duration: 0.45, ease: "power3.out" });
-
-            window.addEventListener("pointermove", (event) => {
-                moveGlowX(event.clientX - 144);
-                moveGlowY(event.clientY - 144);
+            window.addEventListener("pointermove", (e) => {
+                moveGlowX(e.clientX - 144);
+                moveGlowY(e.clientY - 144);
             });
         }
-
-        document.addEventListener('DOMContentLoaded', loadShopProducts);
     </script>
 </body>
 </html>
