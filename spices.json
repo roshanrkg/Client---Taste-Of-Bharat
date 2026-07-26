@@ -1,7 +1,7 @@
 [
     {
         "slug": "lakadong-turmeric",
-        "name": "Lakadong Turmeric",
+        "name": "Turmeric",
         "category": "ground-masalas",
         "description": "High curcumin content, vibrant color, and earthy aroma.",
         "shortDescription": "A bright, earthy turmeric prized for its potency and aroma.",
@@ -21,7 +21,7 @@
             "cardamom_.jpg",
             "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=1200&q=80"
         ],
-        "alt": "Lakadong Turmeric",
+        "alt": "Turmeric",
         "badge": "Bestseller",
         "weight": "50g",
         "weightOptions": [
